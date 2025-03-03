@@ -39,13 +39,13 @@ public class FacultyRepository {
      * Оновлює дані про факультет за його ID.
      *
      * @param id      ідентифікатор факультету
-     * @param faculty нові дані для оновлення
+     * @param newFacultyData нові дані для оновлення
      */
-    public void updateFaculty(String id, FacultyEntity faculty) {
-        FacultyEntity faculty1 = getFaculty(id);
+    public void updateFaculty(String id, FacultyEntity newFacultyData) {
+        FacultyEntity faculty = getFaculty(id);
 
-        if (faculty1 != null)
-            faculty1.update(faculty);
+        if (faculty != null)
+            faculty.update(newFacultyData);
         else
             out.println("Факультет не знайдено!");
     }

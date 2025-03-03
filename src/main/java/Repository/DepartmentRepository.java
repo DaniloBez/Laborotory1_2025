@@ -40,13 +40,13 @@ public class DepartmentRepository {
      * Оновлює дані про кафедру за її ID.
      *
      * @param id      ідентифікатор кафедри
-     * @param department нові дані для оновлення
+     * @param newDepartmentData нові дані для оновлення
      */
-    public void updateDepartment(String id, DepartmentEntity department) {
-        DepartmentEntity department1 = getDepartment(id);
+    public void updateDepartment(String id, DepartmentEntity newDepartmentData) {
+        DepartmentEntity department = getDepartment(id);
 
-        if (department1 != null)
-            department1.update(department);
+        if (department != null)
+            department.update(newDepartmentData);
         else
             out.println("Кафедру не знайдено!");
     }

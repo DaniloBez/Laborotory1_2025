@@ -38,13 +38,13 @@ public class PersonRepository {
      * Оновлює дані про особу за її ID.
      *
      * @param id     ідентифікатор особи
-     * @param person нові дані для оновлення
+     * @param newPersonData нові дані для оновлення
      */
-    public void updatePerson(String id, PersonEntity person) {
-        PersonEntity person1 = getPerson(id);
+    public void updatePerson(String id, PersonEntity newPersonData) {
+        PersonEntity person = getPerson(id);
 
-        if (person1 != null)
-            person1.update(person);
+        if (person != null)
+            person.update(newPersonData);
         else
             out.println("Особу не знайдено!");
     }
