@@ -23,6 +23,7 @@ public class PersonRepository {
         persons = new PersonEntity[0];
     }
 
+    //region CRUD
     /**
      * Додає нову особу в репозиторій.
      *
@@ -95,6 +96,7 @@ public class PersonRepository {
     public PersonEntity[] getPersons() {
         return persons;
     }
+    //endregion
 
     /**
      * Знаходить індекс особи за її ID.

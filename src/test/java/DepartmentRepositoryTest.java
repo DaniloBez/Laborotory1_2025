@@ -67,7 +67,7 @@ public class DepartmentRepositoryTest {
     void testAddPersonToDepartment() {
         DepartmentEntity department = new DepartmentEntity("Di");
         repo.createDepartment(department);
-        repo.addDepartmentToFaculty(department.getId(), "1");
+        repo.addPersonToDepartment(department.getId(), "1");
 
         department.setPersonIds(new String[]{"1"});
         assertEquals(department, repo.getDepartment(department.getId()));
@@ -77,9 +77,9 @@ public class DepartmentRepositoryTest {
     void testRemovePersonFromDepartment() {
         DepartmentEntity department = new DepartmentEntity("Di");
         repo.createDepartment(department);
-        repo.addDepartmentToFaculty(department.getId(), "1");
+        repo.addPersonToDepartment(department.getId(), "1");
 
-        repo.removeDepartmentFromFaculty(department.getId(), "1");
+        repo.removePersonFromDepartment(department.getId(), "1");
         assertEquals(department, repo.getDepartment(department.getId()));
     }
 }

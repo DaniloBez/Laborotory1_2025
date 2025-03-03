@@ -24,6 +24,7 @@ public class FacultyRepository {
         faculties = new FacultyEntity[0];
     }
 
+    //region CRUD
     /**
      * Додає новий факультет до репозиторію.
      *
@@ -95,7 +96,9 @@ public class FacultyRepository {
     public FacultyEntity[] getFaculties() {
         return faculties;
     }
+    //endregion
 
+    //region Department
     /**
      * Додає кафедру до факультету за її ID.
      *
@@ -151,6 +154,7 @@ public class FacultyRepository {
         else
             out.println("Факультет не знайдено!");
     }
+    //endregion
 
     /**
      * Знаходить індекс факультету за його ID.
