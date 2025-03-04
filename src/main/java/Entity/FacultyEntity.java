@@ -1,5 +1,6 @@
 package Entity;
 
+import Utils.IDGenerator;
 import lombok.*;
 
 import java.util.UUID;
@@ -15,7 +16,7 @@ public class FacultyEntity {
      * Унікальний ідентифікатор факультету.
      */
     @Setter(AccessLevel.NONE)
-    private final String id = UUID.randomUUID().toString();
+    private final String id = IDGenerator.generateID() + hashCode();
 
     /**
      * Назва факультету.

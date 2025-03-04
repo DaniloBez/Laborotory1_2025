@@ -25,6 +25,7 @@ public class DepartmentRepository {
         departments = new DepartmentEntity[0];
     }
 
+    //region CRUD
     /**
      * Додає нову кафедру до репозиторію.
      *
@@ -39,13 +40,13 @@ public class DepartmentRepository {
      * Оновлює дані про кафедру за її ID.
      *
      * @param id      ідентифікатор кафедри
-     * @param department нові дані для оновлення
+     * @param newDepartmentData нові дані для оновлення
      */
-    public void updateDepartment(String id, DepartmentEntity department) {
-        DepartmentEntity department1 = getDepartment(id);
+    public void updateDepartment(String id, DepartmentEntity newDepartmentData) {
+        DepartmentEntity department = getDepartment(id);
 
-        if (department1 != null)
-            department1.update(department);
+        if (department != null)
+            department.update(newDepartmentData);
         else
             out.println("Кафедру не знайдено!");
     }
@@ -96,14 +97,16 @@ public class DepartmentRepository {
     public DepartmentEntity[] getDepartments() {
         return departments;
     }
+    //endregion
 
+    //region Person
     /**
      * Додає кафедру до факультету за її ID.
      *
      * @param idDepartment ідентифікатор факультету
      * @param idPerson  ідентифікатор кафедри
      */
-    public void addDepartmentToFaculty(String idDepartment, String idPerson) {
+    public void addPersonToDepartment(String idDepartment, String idPerson) {
         DepartmentEntity department = getDepartment(idDepartment);
 
         if (department != null) {
@@ -122,7 +125,7 @@ public class DepartmentRepository {
      * @param idDepartment ідентифікатор кафедри
      * @param idPerson  ідентифікатор особи
      */
-    public void removeDepartmentFromFaculty(String idDepartment, String idPerson) {
+    public void removePersonFromDepartment(String idDepartment, String idPerson) {
         DepartmentEntity department = getDepartment(idDepartment);
         if (department != null) {
             String[] ids = department.getPersonIds();
@@ -153,6 +156,7 @@ public class DepartmentRepository {
         else
             out.println("Кафедру не знайдено!");
     }
+    //endregion
 
     /**
      * Знаходить індекс кафедри за її ID.

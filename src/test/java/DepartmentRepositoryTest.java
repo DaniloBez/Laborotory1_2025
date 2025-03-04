@@ -1,11 +1,14 @@
 import Entity.DepartmentEntity;
+
 import Repository.DepartmentRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// TODO *непрацюючі* тести
 public class DepartmentRepositoryTest {
     private DepartmentRepository repo;
 
@@ -67,7 +70,7 @@ public class DepartmentRepositoryTest {
     void testAddPersonToDepartment() {
         DepartmentEntity department = new DepartmentEntity("Di");
         repo.createDepartment(department);
-        repo.addDepartmentToFaculty(department.getId(), "1");
+        repo.addPersonToDepartment(department.getId(), "1");
 
         department.setPersonIds(new String[]{"1"});
         assertEquals(department, repo.getDepartment(department.getId()));
@@ -77,9 +80,9 @@ public class DepartmentRepositoryTest {
     void testRemovePersonFromDepartment() {
         DepartmentEntity department = new DepartmentEntity("Di");
         repo.createDepartment(department);
-        repo.addDepartmentToFaculty(department.getId(), "1");
+        repo.addPersonToDepartment(department.getId(), "1");
 
-        repo.removeDepartmentFromFaculty(department.getId(), "1");
+        repo.removePersonFromDepartment(department.getId(), "1");
         assertEquals(department, repo.getDepartment(department.getId()));
     }
 }

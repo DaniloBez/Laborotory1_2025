@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// TODO *непрацюючі* тести
 public class FacultyRepositoryTest {
     private FacultyRepository repo;
 

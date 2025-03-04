@@ -1,13 +1,20 @@
-import Entity.PersonEntity;
-import Entity.PersonType;
-import Repository.PersonRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import Entity.Person.PersonEntity;
+import Entity.Person.StudentEntity;
+import Entity.Person.TeacherEntity;
 
+import Repository.PersonRepository;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// TODO *непрацюючі* тести
 public class PersonRepositoryTest {
     private PersonRepository repo;
 
@@ -16,19 +23,24 @@ public class PersonRepositoryTest {
         repo = new PersonRepository();
     }
 
-    @Test
-    void testCreatePerson() {
-        PersonEntity person = new PersonEntity("name", "surname",
-                "middleName", "course", "group", PersonType.STUDENT);
+    static Stream<PersonEntity> personProvider(){
+        return Stream.of(
+                new TeacherEntity("teacherName", "teacherSurname", "teacherMiddleName"),
+                new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("personProvider")
+    void testCreatePerson(PersonEntity person) {
         repo.createPerson(person);
         assertEquals(1, repo.getPersons().length);
         assertEquals(person, repo.getPerson(person.getId()));
     }
 
-    @Test
-    void testUpdatePerson() {
-        PersonEntity person = new PersonEntity("name", "surname",
-                "middleName", "course", "group", PersonType.STUDENT);
+    @ParameterizedTest
+    @MethodSource("personProvider")
+    void testUpdatePerson(PersonEntity person) {
         repo.createPerson(person);
 
         person.setName("newName");
@@ -38,10 +50,9 @@ public class PersonRepositoryTest {
         assertEquals(person, repo.getPerson(person.getId()));
     }
 
-    @Test
-    void testDeletePerson() {
-        PersonEntity person = new PersonEntity("name", "surname",
-                "middleName", "course", "group", PersonType.STUDENT);
+    @ParameterizedTest
+    @MethodSource("personProvider")
+    void testDeletePerson(PersonEntity person) {
         repo.createPerson(person);
         assertEquals(1, repo.getPersons().length);
 
@@ -49,27 +60,24 @@ public class PersonRepositoryTest {
         assertEquals(0, repo.getPersons().length);
     }
 
-    @Test
-    void testGetPersons() {
-        PersonEntity student = new PersonEntity("name", "surname",
-                "middleName", "course", "group", PersonType.STUDENT);
-        PersonEntity teacher = new PersonEntity("name", "surname",
-                "middleName", "course", "group", PersonType.TEACHER);
+    @ParameterizedTest
+    @MethodSource("personProvider")
+    void testGetPersons(PersonEntity person) {
+        StudentEntity student = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
 
+        repo.createPerson(person);
         repo.createPerson(student);
-        repo.createPerson(teacher);
 
-        PersonEntity[] persons = {student, teacher};
+        PersonEntity[] persons = {person, student};
 
         assertArrayEquals(persons, repo.getPersons());
     }
 
-    @Test
-    void testGetPersonById() {
-        PersonEntity student = new PersonEntity("name", "surname",
-                "middleName", "course", "group", PersonType.STUDENT);
-        repo.createPerson(student);
+    @ParameterizedTest
+    @MethodSource("personProvider")
+    void testGetPersonById(PersonEntity person) {
+        repo.createPerson(person);
 
-        assertEquals(student, repo.getPerson(student.getId()));
+        assertEquals(person, repo.getPerson(person.getId()));
     }
 }
