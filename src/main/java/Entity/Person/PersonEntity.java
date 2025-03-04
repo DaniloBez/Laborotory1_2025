@@ -1,5 +1,6 @@
 package Entity.Person;
 
+import Utils.IDGenerator;
 import lombok.*;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public class PersonEntity {
      * Унікальний ідентифікатор для кожного екземпляра людини.
      */
     @Setter(AccessLevel.NONE)
-    private final String id = UUID.randomUUID().toString();
+    private final String id = IDGenerator.generateID() + hashCode();
 
     /**
      * Ім'я людини.

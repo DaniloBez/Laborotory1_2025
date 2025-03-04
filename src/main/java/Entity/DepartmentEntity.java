@@ -1,5 +1,6 @@
 package Entity;
 
+import Utils.IDGenerator;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class DepartmentEntity {
      * Унікальний ідентифікатор кафедри.
      */
     @Setter(AccessLevel.NONE)
-    private final String id = UUID.randomUUID().toString();
+    private final String id = IDGenerator.generateID() + hashCode();
 
     /**
      * Назва кафедри.
