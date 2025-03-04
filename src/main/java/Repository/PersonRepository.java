@@ -1,6 +1,6 @@
 package Repository;
 
-import Entity.PersonEntity;
+import Entity.Person.PersonEntity;
 
 import java.util.Arrays;
 
@@ -44,7 +44,7 @@ public class PersonRepository {
         PersonEntity person = getPerson(id);
 
         if (person != null)
-            person.update(newPersonData);
+            person = newPersonData;
         else
             out.println("Особу не знайдено!");
     }
