@@ -44,7 +44,7 @@ public class PersonRepository {
         PersonEntity person = getPerson(id);
 
         if (person != null)
-            person = newPersonData;
+            person.update(newPersonData);
         else
             out.println("Особу не знайдено!");
     }

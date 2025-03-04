@@ -2,7 +2,6 @@ package Entity.Person;
 
 import Utils.IDGenerator;
 import lombok.*;
-import java.util.UUID;
 
 /**
  * Представляє сутність людини з основною інформацією та автоматично згенерованим ID.
@@ -44,6 +43,12 @@ public class PersonEntity {
         this.name = name;
         this.surname = surname;
         this.middleName = middleName;
+    }
+
+    public void update(PersonEntity personEntity) {
+        this.name = personEntity.getName();
+        this.surname = personEntity.getSurname();
+        this.middleName = personEntity.getMiddleName();
     }
 
     /**

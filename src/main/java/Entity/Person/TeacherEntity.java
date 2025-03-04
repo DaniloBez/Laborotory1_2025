@@ -1,5 +1,8 @@
 package Entity.Person;
 
+/**
+ * Представляє сутність вчителя з основною інформацією та автоматично згенерованим ID.
+ */
 public class TeacherEntity extends PersonEntity {
     /**
      * Конструює новий екземпляр TeacherEntity із заданими параметрами.

@@ -3,6 +3,10 @@ package Entity.Person;
 import lombok.Getter;
 import lombok.Setter;
 
+
+/**
+ * Представляє сутність студента з основною інформацією та автоматично згенерованим ID.
+ */
 @Getter
 @Setter
 public class StudentEntity extends PersonEntity{
@@ -30,6 +34,14 @@ public class StudentEntity extends PersonEntity{
         super(name, surname, middleName);
         this.course = course;
         this.group = group;
+    }
+
+    @Override
+    public void update(PersonEntity person) {
+        StudentEntity studentEntity = (StudentEntity) person;
+        super.update(studentEntity);
+        this.course = studentEntity.getCourse();
+        this.group = studentEntity.getGroup();
     }
 
     /**

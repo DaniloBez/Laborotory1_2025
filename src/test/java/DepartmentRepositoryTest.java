@@ -1,11 +1,14 @@
 import Entity.DepartmentEntity;
+
 import Repository.DepartmentRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// TODO *непрацюючі* тести
 public class DepartmentRepositoryTest {
     private DepartmentRepository repo;
 
