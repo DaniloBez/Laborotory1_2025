@@ -3,9 +3,12 @@ package Service;
 import Entity.FacultyEntity;
 import Entity.DepartmentEntity;
 import Entity.Person.PersonEntity;
+import Entity.Person.StudentEntity;
+import Entity.Person.TeacherEntity;
 import Repository.DepartmentRepository;
 import Repository.FacultyRepository;
 import Repository.PersonRepository;
+import Utils.DataInput;
 
 /**
  * Сервісний клас, який забезпечує управління факультетами, кафедрами та особами.
@@ -237,5 +240,128 @@ public class Service {
     public PersonEntity[] getPersons(){
         return personRepository.getPersons();
     }
+
+    /**
+     * Знаходить студента за повним ім'ям.
+     *
+     * @param name ім'я студента
+     * @param surname прізвище студента
+     * @param middleName по батькові студента
+     * @return знайдений студент або null, якщо такого немає
+     */
+    public PersonEntity findStudentByFullName(String name, String surname, String middleName){
+        FacultyEntity[] faculties = facultyRepository.getFaculties();
+
+        for (FacultyEntity faculty : faculties) {
+            String[] id = faculty.getDepartmentIds();
+
+            for (String departmentId : id) {
+                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
+                String[] personId = department.getPersonIds();
+
+                for (String personId1 : personId) {
+                    PersonEntity person = personRepository.getPerson(personId1);
+
+                    if(person instanceof StudentEntity student) {
+                        if (student.getName().equals(name) && student.getSurname().equals(surname) && student.getMiddleName().equals(middleName))
+                            return person;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Знаходить студента за номером групи.
+     *
+     * @param group номер групи
+     * @return знайдений студент або null, якщо такого немає
+     */
+    public PersonEntity findStudentByGroup(int group){
+        FacultyEntity[] faculties = facultyRepository.getFaculties();
+
+        for (FacultyEntity faculty : faculties) {
+            String[] id = faculty.getDepartmentIds();
+
+            for (String departmentId : id) {
+                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
+                String[] personId = department.getPersonIds();
+
+                for (String personId1 : personId) {
+                    PersonEntity person = personRepository.getPerson(personId1);
+
+                    if (person instanceof StudentEntity && ((StudentEntity) person).getGroup() == group)
+                        return person;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Знаходить студента за номером курсу.
+     *
+     * @param course номер курсу
+     * @return знайдений студент або null, якщо такого немає
+     */
+    public PersonEntity findStudentByCourse(int course){
+        FacultyEntity[] faculties = facultyRepository.getFaculties();
+
+        for (FacultyEntity faculty : faculties) {
+            String[] id = faculty.getDepartmentIds();
+
+            for (String departmentId : id) {
+                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
+                String[] personId = department.getPersonIds();
+
+                for (String personId1 : personId) {
+                    PersonEntity person = personRepository.getPerson(personId1);
+
+                    if (person instanceof StudentEntity && ((StudentEntity) person).getCourse() == course)
+                        return person;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Знаходить викладача за повним ім'ям.
+     *
+     * @param name ім'я викладача
+     * @param surname прізвище викладача
+     * @param middleName по батькові викладача
+     * @return знайдений викладач або null, якщо такого немає
+     */
+    public PersonEntity findTeacherByFullName(String name, String surname, String middleName){
+        FacultyEntity[] faculties = facultyRepository.getFaculties();
+
+        for (FacultyEntity faculty : faculties) {
+            String[] id = faculty.getDepartmentIds();
+
+            for (String departmentId : id) {
+                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
+                String[] personId = department.getPersonIds();
+
+                for (String personId1 : personId) {
+                    PersonEntity person = personRepository.getPerson(personId1);
+
+                    if(person instanceof TeacherEntity teacher) {
+                        if (teacher.getName().equals(name) && teacher.getSurname().equals(surname) && teacher.getMiddleName().equals(middleName))
+                            return person;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     //endregion
+
+
 }

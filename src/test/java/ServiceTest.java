@@ -17,8 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 // TODO *непрацюючі* тести
 public class ServiceTest {
@@ -271,4 +270,120 @@ public class ServiceTest {
 
         assertEquals(person, personRepo.getPerson(person.getId()));
     }
+
+    @Test
+    void testCantFindStudentByFullName() {
+       FacultyEntity faculty = new FacultyEntity("Faculty");
+       service.createFaculty(faculty);
+
+       DepartmentEntity department = new DepartmentEntity("Department");
+       service.createDepartment(department, faculty.getId());
+
+       PersonEntity person = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+       assertNull(service.findStudentByFullName(person.getName(), person.getSurname(), person.getMiddleName()));
+
+
+       PersonEntity teacher = new TeacherEntity("teacherName", "teacherSurname", "teacherMiddleName");
+       service.createPerson(teacher, department.getId());
+       assertNull(service.findStudentByFullName(teacher.getName(), teacher.getSurname(), teacher.getMiddleName()));
+   }
+
+    @Test
+    void testFindStudentByFullName() {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        PersonEntity person = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+
+        service.createPerson(person, department.getId());
+        assertEquals(person, service.findStudentByFullName(person.getName(), person.getSurname(), person.getMiddleName()));
+    }
+
+    @Test
+    void testFindStudentByGroup() {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        StudentEntity person = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+
+        service.createPerson(person, department.getId());
+        assertEquals(person, service.findStudentByGroup(person.getGroup()));
+    }
+    @Test
+    void testCantFindStudentByGroup() {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        StudentEntity person = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+
+        service.createPerson(person, department.getId());
+        assertNull(service.findStudentByGroup(99));
+    }
+
+    @Test
+    void testFindStudentByCourse() {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        StudentEntity person = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+
+        service.createPerson(person, department.getId());
+        assertEquals(person, service.findStudentByCourse(person.getCourse()));
+    }
+    @Test
+    void testCantFindStudentByCourse() {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        StudentEntity person = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+
+        service.createPerson(person, department.getId());
+        assertNull(service.findStudentByCourse(99));
+    }
+
+    @Test
+    void testCantFindTeacherByFullName() {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        PersonEntity teacher = new TeacherEntity("teacherName", "teacherSurname", "teacherMiddleName");
+        assertNull(service.findStudentByFullName(teacher.getName(), teacher.getSurname(), teacher.getMiddleName()));
+
+
+        PersonEntity student = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+        assertNull(service.findTeacherByFullName(student.getName(), student.getSurname(), student.getMiddleName()));
+    }
+
+    @Test
+    void testFindTeacherByFullName() {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        PersonEntity teacher = new TeacherEntity("teacherName", "teacherSurname", "teacherMiddleName");
+
+        service.createPerson(teacher, department.getId());
+        assertEquals(teacher, service.findTeacherByFullName(teacher.getName(), teacher.getSurname(), teacher.getMiddleName()));
+    }
+
 }
