@@ -81,6 +81,6 @@ public class StudentEntity{
      */
     @Override
     public String toString() {
-        return "Ім'я: " + name + ", прізвище: " + surname + ", по батькові: " + middleName + ", Курс: " + course + ", Група: " + group + ".";
+        return surname + " " + name + " " + middleName + ", Курс: " + course + ", Група: " + group + ".";
     }
 }

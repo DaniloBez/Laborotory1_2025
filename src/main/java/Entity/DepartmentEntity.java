@@ -56,4 +56,9 @@ public class DepartmentEntity {
         this.studentIds = departmentEntity.getStudentIds();
         this.teacherIds = departmentEntity.getTeacherIds();
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
