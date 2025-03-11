@@ -2,7 +2,6 @@ package Service;
 
 import Entity.FacultyEntity;
 import Entity.DepartmentEntity;
-import Entity.Person.PersonEntity;
 import Repository.DepartmentRepository;
 import Repository.FacultyRepository;
 import Repository.PersonRepository;

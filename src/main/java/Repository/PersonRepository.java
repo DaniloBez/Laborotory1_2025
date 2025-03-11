@@ -1,7 +1,5 @@
 package Repository;
 
-import Entity.Person.PersonEntity;
-
 import java.util.Arrays;
 
 import static Utils.Constants.INDEX_NOT_FOUND;

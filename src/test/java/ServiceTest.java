@@ -1,6 +1,5 @@
 import Entity.DepartmentEntity;
 import Entity.FacultyEntity;
-import Entity.Person.PersonEntity;
 import Entity.Person.StudentEntity;
 import Entity.Person.TeacherEntity;
 
