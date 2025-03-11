@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
 
 /**
  * Представляє кафедру факультету із назвою та списком ідентифікаторів осіб, які до нього належать.
@@ -27,9 +26,14 @@ public class DepartmentEntity {
     private String name;
 
     /**
-     * Масив ідентифікаторів осіб, що належать до факультету.
+     * Масив ідентифікаторів студентів, що належать до факультету.
      */
-    private String[] personIds;
+    private String[] studentIds;
+
+    /**
+     * Масив ідентифікаторів вчителів, що належать до факультету.
+     */
+    private String[] teacherIds;
 
     /**
      * Конструктор, що створює нову кафедру із заданою назвою.
@@ -38,7 +42,8 @@ public class DepartmentEntity {
      */
     public DepartmentEntity(String name) {
         this.name = name;
-        personIds = new String[0];
+        studentIds = new String[0];
+        teacherIds = new String[0];
     }
 
     /**
@@ -48,6 +53,7 @@ public class DepartmentEntity {
      */
     public void update(DepartmentEntity departmentEntity) {
         this.name = departmentEntity.getName();
-        this.personIds = departmentEntity.getPersonIds();
+        this.studentIds = departmentEntity.getStudentIds();
+        this.teacherIds = departmentEntity.getTeacherIds();
     }
 }

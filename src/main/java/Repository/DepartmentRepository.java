@@ -101,38 +101,57 @@ public class DepartmentRepository {
 
     //region Person
     /**
-     * Додає кафедру до факультету за її ID.
+     * Додає студента до факультету за його ID.
      *
-     * @param idDepartment ідентифікатор факультету
-     * @param idPerson  ідентифікатор кафедри
+     * @param idDepartment ідентифікатор кафедри
+     * @param idStudent    ідентифікатор студента
      */
-    public void addPersonToDepartment(String idDepartment, String idPerson) {
+    public void addStudentToDepartment(String idDepartment, String idStudent) {
         DepartmentEntity department = getDepartment(idDepartment);
 
         if (department != null) {
-            String[] ids = department.getPersonIds();
+            String[] ids = department.getStudentIds();
             ids = Arrays.copyOf(ids, ids.length + 1);
-            ids[ids.length - 1] = idPerson;
-            department.setPersonIds(ids);
+            ids[ids.length - 1] = idStudent;
+            department.setStudentIds(ids);
         }
         else
             out.println("Факультет не знайдено!");
     }
 
     /**
-     * Видаляє особу з кафедри за її ID.
+     * Додає вчителя до факультету за його ID.
      *
      * @param idDepartment ідентифікатор кафедри
-     * @param idPerson  ідентифікатор особи
+     * @param idTeacher    ідентифікатор вчителя
      */
-    public void removePersonFromDepartment(String idDepartment, String idPerson) {
+    public void addTeacherToDepartment(String idDepartment, String idTeacher) {
+        DepartmentEntity department = getDepartment(idDepartment);
+
+        if (department != null) {
+            String[] ids = department.getTeacherIds();
+            ids = Arrays.copyOf(ids, ids.length + 1);
+            ids[ids.length - 1] = idTeacher;
+            department.setTeacherIds(ids);
+        }
+        else
+            out.println("Факультет не знайдено!");
+    }
+
+    /**
+     * Видаляє студента з кафедри за його ID.
+     *
+     * @param idDepartment ідентифікатор кафедри
+     * @param idStudent  ідентифікатор студента
+     */
+    public void removeStudentFromDepartment(String idDepartment, String idStudent) {
         DepartmentEntity department = getDepartment(idDepartment);
         if (department != null) {
-            String[] ids = department.getPersonIds();
+            String[] ids = department.getStudentIds();
 
             String id = ID_NOT_FOUND;
             for (String string : ids) {
-                if (string.equals(idPerson)) {
+                if (string.equals(idStudent)) {
                     id = string;
                     break;
                 }
@@ -148,10 +167,48 @@ public class DepartmentRepository {
                     }
                 }
 
-                department.setPersonIds(newIds);
+                department.setStudentIds(newIds);
             }
             else
-                out.println("Особу не знайдено!");
+                out.println("Студента не знайдено!");
+        }
+        else
+            out.println("Кафедру не знайдено!");
+    }
+
+    /**
+     * Видаляє вчителя з кафедри за його ID.
+     *
+     * @param idDepartment ідентифікатор кафедри
+     * @param idTeacher  ідентифікатор вчителя
+     */
+    public void removeTeacherFromDepartment(String idDepartment, String idTeacher) {
+        DepartmentEntity department = getDepartment(idDepartment);
+        if (department != null) {
+            String[] ids = department.getTeacherIds();
+
+            String id = ID_NOT_FOUND;
+            for (String string : ids) {
+                if (string.equals(idTeacher)) {
+                    id = string;
+                    break;
+                }
+            }
+
+            if (!id.equals(ID_NOT_FOUND)) {
+                String[] newIds = new String[ids.length - 1];
+
+                int j = 0;
+                for (String s : ids) {
+                    if (!s.equals(id)) {
+                        newIds[j++] = s;
+                    }
+                }
+
+                department.setTeacherIds(newIds);
+            }
+            else
+                out.println("Вчителя не знайдено!");
         }
         else
             out.println("Кафедру не знайдено!");
