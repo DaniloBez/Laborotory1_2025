@@ -1,5 +1,7 @@
 package Entity.Person;
 
+import Utils.IDGenerator;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +11,28 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class StudentEntity extends PersonEntity{
+public class StudentEntity{
+
+    /**
+     * Унікальний ідентифікатор для кожного екземпляра студента.
+     */
+    @Setter(AccessLevel.NONE)
+    private final String id = IDGenerator.generateID() + hashCode();
+
+    /**
+     * Ім'я студента.
+     */
+    private String name;
+
+    /**
+     * Прізвище студента.
+     */
+    private String surname;
+
+    /**
+     * По батькові студента.
+     */
+    private String middleName;
 
     /**
      * Курс навчання студента.
@@ -24,22 +47,29 @@ public class StudentEntity extends PersonEntity{
     /**
      * Конструює новий екземпляр StudentEntity із заданими параметрами.
      *
-     * @param name       ім'я людини
-     * @param surname    прізвище людини
-     * @param middleName по батькові людини
+     * @param name       ім'я студента
+     * @param surname    прізвище студента
+     * @param middleName по батькові студента
      * @param course     курс навчання
      * @param group      група, до якої належить людина
      */
     public StudentEntity(String name, String surname, String middleName, int course, int group) {
-        super(name, surname, middleName);
+        this.name = name;
+        this.surname = surname;
+        this.middleName = middleName;
         this.course = course;
         this.group = group;
     }
 
-    @Override
-    public void update(PersonEntity person) {
-        StudentEntity studentEntity = (StudentEntity) person;
-        super.update(studentEntity);
+    /**
+     * Оновлює дані студента
+     *
+     * @param studentEntity сутність що представляє нові дані студента
+     */
+    public void update(StudentEntity studentEntity) {
+        this.name = studentEntity.getName();
+        this.surname = studentEntity.getSurname();
+        this.middleName = studentEntity.getMiddleName();
         this.course = studentEntity.getCourse();
         this.group = studentEntity.getGroup();
     }
@@ -51,6 +81,6 @@ public class StudentEntity extends PersonEntity{
      */
     @Override
     public String toString() {
-        return super.toString() + ", Course: " + course + ", Group: " + group + ".";
+        return "Ім'я: " + name + ", прізвище: " + surname + ", по батькові: " + middleName + ", Курс: " + course + ", Група: " + group + ".";
     }
 }

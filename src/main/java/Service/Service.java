@@ -2,31 +2,35 @@ package Service;
 
 import Entity.FacultyEntity;
 import Entity.DepartmentEntity;
-import Entity.Person.PersonEntity;
 import Entity.Person.StudentEntity;
 import Entity.Person.TeacherEntity;
 import Repository.DepartmentRepository;
 import Repository.FacultyRepository;
-import Repository.PersonRepository;
-import Utils.DataInput;
+import Repository.StudentRepository;
+import Repository.TeacherRepository;
+
+import static java.lang.System.out;
 
 /**
  * Сервісний клас, який забезпечує управління факультетами, кафедрами та особами.
  */
 public class Service {
-    private final PersonRepository personRepository;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final DepartmentRepository departmentRepository;
     private final FacultyRepository facultyRepository;
 
     /**
      * Конструктор сервісу.
      *
-     * @param personRepository репозиторій осіб
+     * @param studentRepository репозиторій студентів
+     * @param teacherRepository репозиторій вчителів
      * @param departmentRepository репозиторій кафедр
      * @param facultyRepository репозиторій факультетів
      */
-    public Service(PersonRepository personRepository, DepartmentRepository departmentRepository, FacultyRepository facultyRepository) {
-        this.personRepository = personRepository;
+    public Service(StudentRepository studentRepository, TeacherRepository teacherRepository, DepartmentRepository departmentRepository, FacultyRepository facultyRepository) {
+        this.studentRepository = studentRepository;
+        this.teacherRepository = teacherRepository;
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
     }
@@ -64,15 +68,22 @@ public class Service {
                 DepartmentEntity department = departmentRepository.getDepartment(departmentId);
 
                 if(department != null){
-                    for (String personId : department.getPersonIds())
-                        personRepository.deletePerson(personId);
+                    for (String personId : department.getStudentIds())
+                        studentRepository.deleteStudent(personId);
+
+                    for (String teacherId : department.getTeacherIds())
+                        teacherRepository.deleteTeacher(teacherId);
 
                     departmentRepository.deleteDepartment(departmentId);
                 }
+                else
+                    out.println("Кафедру не знайдено!");
             }
 
             facultyRepository.deleteFaculty(idFaculty);
         }
+        else
+            out.println("Факультет не знайдено!");
     }
 
     /**
@@ -103,8 +114,12 @@ public class Service {
      * @param idFaculty ідентифікатор факультету
      */
     public void createDepartment(DepartmentEntity department, String idFaculty){
-        departmentRepository.createDepartment(department);
-        facultyRepository.addDepartmentToFaculty(idFaculty, department.getId());
+        if(facultyRepository.getFaculty(idFaculty) != null){
+            departmentRepository.createDepartment(department);
+            facultyRepository.addDepartmentToFaculty(idFaculty, department.getId());
+        }
+        else
+            out.println("Факультет не знайдено!");
     }
 
     /**
@@ -126,13 +141,19 @@ public class Service {
         DepartmentEntity department = departmentRepository.getDepartment(idDepartment);
 
         if(department != null){
-            for(String personId : department.getPersonIds()){
-                personRepository.deletePerson(personId);
+            for(String studentId : department.getStudentIds()){
+                studentRepository.deleteStudent(studentId);
             }
-        }
 
-        departmentRepository.deleteDepartment(idDepartment);
-        facultyRepository.removeDepartmentFromFaculty(findFacultyLinkedToDepartment(idDepartment), idDepartment);
+            for(String teacherId : department.getTeacherIds()){
+                teacherRepository.deleteTeacher(teacherId);
+            }
+
+            departmentRepository.deleteDepartment(idDepartment);
+            facultyRepository.removeDepartmentFromFaculty(findFacultyLinkedToDepartment(idDepartment), idDepartment);
+        }
+        else
+            out.println("Кафедру не знайдено!");
     }
 
     /**
@@ -145,7 +166,7 @@ public class Service {
         for (FacultyEntity faculty : facultyRepository.getFaculties()) {
             for (String departmentId : faculty.getDepartmentIds()) {
                 if (departmentId.equals(idDepartment)) {
-                    return departmentId;
+                    return faculty.getId();
                 }
             }
         }
@@ -172,50 +193,53 @@ public class Service {
     }
     //endregion
 
-    //region Person
-
+    //region Teacher
     /**
-     * Створює нову особу та додає її до кафедри.
+     * Створює нового вчителя та додає його до кафедри.
      *
-     * @param person нова особа
+     * @param teacher      новий вчитель
      * @param idDepartment ідентифікатор кафедри
      */
-    public void createPerson(PersonEntity person, String idDepartment){
-        personRepository.createPerson(person);
-        departmentRepository.addPersonToDepartment(idDepartment, person.getId());
+    public void createTeacher(TeacherEntity teacher, String idDepartment){
+        if(departmentRepository.getDepartment(idDepartment) != null){
+            teacherRepository.createTeacher(teacher);
+            departmentRepository.addTeacherToDepartment(idDepartment, teacher.getId());
+        }
+        else
+            out.println("Кафедру не знайдено!");
     }
 
     /**
      * Оновлює дані особи.
      *
-     * @param idPerson ідентифікатор особи
-     * @param newPersonData нові дані
+     * @param idTeacher      ідентифікатор вчителя
+     * @param newTeacherData нові дані
      */
-    public void updatePerson(String idPerson, PersonEntity newPersonData){
-        personRepository.updatePerson(idPerson, newPersonData);
+    public void updateTeacher(String idTeacher, TeacherEntity newTeacherData){
+        teacherRepository.updateTeacher(idTeacher, newTeacherData);
     }
 
     /**
-     * Видаляє особу.
+     * Видаляє вчителя.
      *
-     * @param idPerson ідентифікатор особи
+     * @param idTeacher ідентифікатор вчителя
      */
-    public void deletePerson(String idPerson){
-        personRepository.deletePerson(idPerson);
-        departmentRepository.removePersonFromDepartment(idPerson, findDepartmentLinkedToPerson(idPerson));
+    public void deleteTeacher(String idTeacher){
+        teacherRepository.deleteTeacher(idTeacher);
+        departmentRepository.removeTeacherFromDepartment(findDepartmentLinkedToTeacher(idTeacher), idTeacher);
     }
 
     /**
-     * Знаходить ідентифікатор кафедри, до якої належить особа.
+     * Знаходить ідентифікатор кафедри, до якої належить вчитель.
      *
-     * @param idPerson ідентифікатор особи
+     * @param idTeacher ідентифікатор вчителя
      * @return ідентифікатор кафедри, або null, якщо кафедру не знайдено
      */
-    private String findDepartmentLinkedToPerson(String idPerson){
+    private String findDepartmentLinkedToTeacher(String idTeacher){
         for (DepartmentEntity department : departmentRepository.getDepartments()) {
-            for (String personId : department.getPersonIds()) {
-                if (personId.equals(idPerson)) {
-                    return personId;
+            for (String teacherId : department.getTeacherIds()) {
+                if (teacherId.equals(idTeacher)) {
+                    return department.getId();
                 }
             }
         }
@@ -223,22 +247,95 @@ public class Service {
     }
 
     /**
-     * Повертає особу за її ідентифікатором.
+     * Повертає вчителя за його ідентифікатором.
      *
-     * @param idPerson ідентифікатор особи
-     * @return об'єкт особи
+     * @param idTeacher ідентифікатор вчителя
+     * @return об'єкт вчителя
      */
-    public PersonEntity getPerson(String idPerson){
-        return personRepository.getPerson(idPerson);
+    public TeacherEntity getTeacher(String idTeacher){
+        return teacherRepository.getTeacher(idTeacher);
     }
 
     /**
-     * Повертає усіх осіб.
+     * Повертає усіх вчителів.
      *
-     * @return масив осіб
+     * @return масив вчителів
      */
-    public PersonEntity[] getPersons(){
-        return personRepository.getPersons();
+    public TeacherEntity[] getTeachers(){
+        return teacherRepository.getTeachers();
+    }
+    //endregion
+
+    //region Student
+    /**
+     * Створює нового студента та додає його до кафедри.
+     *
+     * @param student      новий студент
+     * @param idDepartment ідентифікатор кафедри
+     */
+    public void createStudent(StudentEntity student, String idDepartment){
+        if(departmentRepository.getDepartment(idDepartment) != null){
+            studentRepository.createStudent(student);
+            departmentRepository.addStudentToDepartment(idDepartment, student.getId());
+        }
+        else
+            out.println("Кафедру не знайдено!");
+    }
+
+    /**
+     * Оновлює дані студента.
+     *
+     * @param idStudent       ідентифікатор студента
+     * @param newStudentData нові дані
+     */
+    public void updateStudent(String idStudent, StudentEntity newStudentData){
+        studentRepository.updateStudent(idStudent, newStudentData);
+    }
+
+    /**
+     * Видаляє студента.
+     *
+     * @param idStudent ідентифікатор студента
+     */
+    public void deleteStudent(String idStudent){
+        studentRepository.deleteStudent(idStudent);
+        departmentRepository.removeStudentFromDepartment(findDepartmentLinkedToStudent(idStudent), idStudent);
+    }
+
+    /**
+     * Знаходить ідентифікатор кафедри, до якої належить студент.
+     *
+     * @param isStudent ідентифікатор студента
+     * @return ідентифікатор кафедри, або null, якщо кафедру не знайдено
+     */
+    private String findDepartmentLinkedToStudent(String isStudent){
+        for (DepartmentEntity department : departmentRepository.getDepartments()) {
+            for (String personId : department.getStudentIds()) {
+                if (personId.equals(isStudent)) {
+                    return department.getId();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Повертає студента за його ідентифікатором.
+     *
+     * @param idStudent ідентифікатор студента
+     * @return об'єкт студента
+     */
+    public StudentEntity getStudent(String idStudent){
+        return studentRepository.getStudent(idStudent);
+    }
+
+    /**
+     * Повертає усіх студентів.
+     *
+     * @return масив студентів
+     */
+    public StudentEntity[] getPersons(){
+        return studentRepository.getStudents();
     }
 
     /**
@@ -362,6 +459,4 @@ public class Service {
     }
 
     //endregion
-
-
 }
