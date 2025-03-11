@@ -1,5 +1,4 @@
 import Entity.Person.StudentEntity;
-import Entity.Person.TeacherEntity;
 
 import Repository.StudentRepository;
 
@@ -10,10 +9,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-// TODO *непрацюючі* тести
 public class StudentRepositoryTest {
     private StudentRepository repo;
 
@@ -22,61 +19,94 @@ public class StudentRepositoryTest {
         repo = new StudentRepository();
     }
 
-    static Stream<PersonEntity> personProvider(){
+    static Stream<StudentEntity> studentProvider(){
         return Stream.of(
-                new TeacherEntity("teacherName", "teacherSurname", "teacherMiddleName"),
+                new StudentEntity("student___$%1_Name", "teacher__!@234_Surname", "teacher__!Middle_++Name", 5, 6),
                 new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("personProvider")
-    void testCreatePerson(PersonEntity person) {
-        repo.createPerson(person);
+    @MethodSource("studentProvider")
+    void testCreatePerson(StudentEntity student) {
+        repo.createStudent(student);
         assertEquals(1, repo.getStudents().length);
-        assertEquals(person, repo.getPerson(person.getId()));
+        assertEquals(student, repo.getStudent(student.getId()));
     }
 
     @ParameterizedTest
-    @MethodSource("personProvider")
-    void testUpdatePerson(PersonEntity person) {
-        repo.createPerson(person);
+    @MethodSource("studentProvider")
+    void testUpdatePerson(StudentEntity student) {
+        repo.createStudent(student);
 
-        person.setName("newName");
+        student.setName("newName");
 
-        repo.updatePerson(person.getId(), person);
+        repo.updateStudent(student.getId(), student);
 
-        assertEquals(person, repo.getPerson(person.getId()));
+        assertEquals(student, repo.getStudent(student.getId()));
     }
 
     @ParameterizedTest
-    @MethodSource("personProvider")
-    void testDeletePerson(PersonEntity person) {
-        repo.createPerson(person);
+    @MethodSource("studentProvider")
+    void testCantUpdatePerson(StudentEntity student) {
+        repo.createStudent(student);
+
+        String name = student.getName();
+
+        student.setName("newName");
+        repo.updateStudent(student.getId(), student);
+
+        student.setName(name);
+        assertEquals(student, repo.getStudent(student.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testDeletePerson(StudentEntity student) {
+        repo.createStudent(student);
         assertEquals(1, repo.getStudents().length);
 
-        repo.deletePerson(person.getId());
+        repo.deleteStudent(student.getId());
         assertEquals(0, repo.getStudents().length);
     }
 
     @ParameterizedTest
-    @MethodSource("personProvider")
-    void testGetPersons(PersonEntity person) {
-        StudentEntity student = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+    @MethodSource("studentProvider")
+    void testCantDeletePerson(StudentEntity student) {
+        repo.createStudent(student);
+        assertEquals(1, repo.getStudents().length);
 
-        repo.createPerson(person);
-        repo.createPerson(student);
+        repo.deleteStudent("student.getId()");
+        assertEquals(1, repo.getStudents().length);
+    }
 
-        PersonEntity[] persons = {person, student};
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testGetPersons(StudentEntity student) {
+        StudentEntity student2 = new StudentEntity("studentName", "studentSurname", "StudentMiddleName", 1, 12);
+
+        repo.createStudent(student);
+        repo.createStudent(student2);
+
+        StudentEntity[] persons = {student, student2};
 
         assertArrayEquals(persons, repo.getStudents());
     }
 
     @ParameterizedTest
-    @MethodSource("personProvider")
-    void testGetPersonById(PersonEntity person) {
-        repo.createPerson(person);
+    @MethodSource("studentProvider")
+    void testGetPersonById(StudentEntity student) {
+        repo.createStudent(student);
 
-        assertEquals(person, repo.getPerson(person.getId()));
+        assertEquals(student, repo.getStudent(student.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testCantGetPersonById(StudentEntity student) {
+        repo.createStudent(student);
+
+        assertNull(repo.getStudent("student.getId()"));
     }
 }
