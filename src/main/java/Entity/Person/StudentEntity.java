@@ -67,10 +67,10 @@ public class StudentEntity{
      * @param studentEntity сутність що представляє нові дані студента
      */
     public void update(StudentEntity studentEntity) {
-        this.name = studentEntity.name;
-        this.surname = studentEntity.surname;
-        this.middleName = studentEntity.middleName;
-        this.course = studentEntity.course;
+        this.name = studentEntity.getName();
+        this.surname = studentEntity.getSurname();
+        this.middleName = studentEntity.getMiddleName();
+        this.course = studentEntity.getCourse();
         this.group = studentEntity.getGroup();
     }
 

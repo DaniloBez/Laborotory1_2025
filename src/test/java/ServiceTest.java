@@ -5,7 +5,7 @@ import Entity.Person.TeacherEntity;
 
 import Repository.DepartmentRepository;
 import Repository.FacultyRepository;
-import Repository.PersonRepository;
+import Repository.StudentRepository;
 
 import Service.Service;
 
@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ServiceTest {
     private Service service;
 
-    private PersonRepository personRepo;
+    private StudentRepository personRepo;
     private DepartmentRepository deptRepo;
     private FacultyRepository facultyRepo;
 
     @BeforeEach
     public void setUp() {
-        personRepo = new PersonRepository();
+        personRepo = new StudentRepository();
         deptRepo = new DepartmentRepository();
         facultyRepo = new FacultyRepository();
 
@@ -69,12 +69,12 @@ public class ServiceTest {
 
         PersonEntity person = new TeacherEntity("name", "surname", "middleName");
         service.createPerson(person, department.getId());
-        assertEquals(1, personRepo.getPersons().length);
+        assertEquals(1, personRepo.getStudents().length);
 
         service.deleteFaculty(faculty.getId());
         assertEquals(0, facultyRepo.getFaculties().length);
         assertEquals(0, deptRepo.getDepartments().length);
-        assertEquals(0, personRepo.getPersons().length);
+        assertEquals(0, personRepo.getStudents().length);
     }
 
     @Test
@@ -136,11 +136,11 @@ public class ServiceTest {
 
         PersonEntity person = new TeacherEntity("name", "surname", "middleName");
         service.createPerson(person, department.getId());
-        assertEquals(1, personRepo.getPersons().length);
+        assertEquals(1, personRepo.getStudents().length);
 
         service.deleteDepartment(department.getId());
         assertEquals(0, deptRepo.getDepartments().length);
-        assertEquals(0, personRepo.getPersons().length);
+        assertEquals(0, personRepo.getStudents().length);
 
         faculty.setDepartmentIds(new String[0]);
         assertEquals(faculty, facultyRepo.getFaculty(faculty.getId()));
@@ -192,7 +192,7 @@ public class ServiceTest {
         service.createDepartment(department, faculty.getId());
 
         service.createPerson(person, department.getId());
-        assertEquals(1, personRepo.getPersons().length);
+        assertEquals(1, personRepo.getStudents().length);
         assertEquals(person, personRepo.getPerson(person.getId()));
     }
 
@@ -226,10 +226,10 @@ public class ServiceTest {
         assertEquals(1, deptRepo.getDepartments().length);
 
         service.createPerson(person, department.getId());
-        assertEquals(1, personRepo.getPersons().length);
+        assertEquals(1, personRepo.getStudents().length);
 
         service.deletePerson(person.getId());
-        assertEquals(0, personRepo.getPersons().length);
+        assertEquals(0, personRepo.getStudents().length);
 
         department.setPersonIds(new String[0]);
         assertEquals(department, deptRepo.getDepartment(department.getId()));
@@ -254,7 +254,7 @@ public class ServiceTest {
 
         PersonEntity[] persons = {person, student};
 
-        assertArrayEquals(persons, personRepo.getPersons());
+        assertArrayEquals(persons, personRepo.getStudents());
     }
 
     @ParameterizedTest

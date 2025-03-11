@@ -1,7 +1,7 @@
 import Entity.Person.StudentEntity;
 import Entity.Person.TeacherEntity;
 
-import Repository.PersonRepository;
+import Repository.StudentRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // TODO *непрацюючі* тести
-public class PersonRepositoryTest {
-    private PersonRepository repo;
+public class StudentRepositoryTest {
+    private StudentRepository repo;
 
     @BeforeEach
     void setUp() {
-        repo = new PersonRepository();
+        repo = new StudentRepository();
     }
 
     static Stream<PersonEntity> personProvider(){
@@ -33,7 +33,7 @@ public class PersonRepositoryTest {
     @MethodSource("personProvider")
     void testCreatePerson(PersonEntity person) {
         repo.createPerson(person);
-        assertEquals(1, repo.getPersons().length);
+        assertEquals(1, repo.getStudents().length);
         assertEquals(person, repo.getPerson(person.getId()));
     }
 
@@ -53,10 +53,10 @@ public class PersonRepositoryTest {
     @MethodSource("personProvider")
     void testDeletePerson(PersonEntity person) {
         repo.createPerson(person);
-        assertEquals(1, repo.getPersons().length);
+        assertEquals(1, repo.getStudents().length);
 
         repo.deletePerson(person.getId());
-        assertEquals(0, repo.getPersons().length);
+        assertEquals(0, repo.getStudents().length);
     }
 
     @ParameterizedTest
@@ -69,7 +69,7 @@ public class PersonRepositoryTest {
 
         PersonEntity[] persons = {person, student};
 
-        assertArrayEquals(persons, repo.getPersons());
+        assertArrayEquals(persons, repo.getStudents());
     }
 
     @ParameterizedTest

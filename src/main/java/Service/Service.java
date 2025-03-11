@@ -4,25 +4,25 @@ import Entity.FacultyEntity;
 import Entity.DepartmentEntity;
 import Repository.DepartmentRepository;
 import Repository.FacultyRepository;
-import Repository.PersonRepository;
+import Repository.StudentRepository;
 
 /**
  * Сервісний клас, який забезпечує управління факультетами, кафедрами та особами.
  */
 public class Service {
-    private final PersonRepository personRepository;
+    private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
     private final FacultyRepository facultyRepository;
 
     /**
      * Конструктор сервісу.
      *
-     * @param personRepository репозиторій осіб
+     * @param studentRepository репозиторій осіб
      * @param departmentRepository репозиторій кафедр
      * @param facultyRepository репозиторій факультетів
      */
-    public Service(PersonRepository personRepository, DepartmentRepository departmentRepository, FacultyRepository facultyRepository) {
-        this.personRepository = personRepository;
+    public Service(StudentRepository studentRepository, DepartmentRepository departmentRepository, FacultyRepository facultyRepository) {
+        this.studentRepository = studentRepository;
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
     }
@@ -61,7 +61,7 @@ public class Service {
 
                 if(department != null){
                     for (String personId : department.getPersonIds())
-                        personRepository.deletePerson(personId);
+                        studentRepository.deletePerson(personId);
 
                     departmentRepository.deleteDepartment(departmentId);
                 }
@@ -123,7 +123,7 @@ public class Service {
 
         if(department != null){
             for(String personId : department.getPersonIds()){
-                personRepository.deletePerson(personId);
+                studentRepository.deletePerson(personId);
             }
         }
 
@@ -177,8 +177,8 @@ public class Service {
      * @param idDepartment ідентифікатор кафедри
      */
     public void createPerson(PersonEntity person, String idDepartment){
-        personRepository.createPerson(person);
-        departmentRepository.addPersonToDepartment(idDepartment, person.getId());
+        studentRepository.createPerson(person);
+        departmentRepository.addStudentToDepartment(idDepartment, person.getId());
     }
 
     /**
@@ -188,7 +188,7 @@ public class Service {
      * @param newPersonData нові дані
      */
     public void updatePerson(String idPerson, PersonEntity newPersonData){
-        personRepository.updatePerson(idPerson, newPersonData);
+        studentRepository.updatePerson(idPerson, newPersonData);
     }
 
     /**
@@ -197,7 +197,7 @@ public class Service {
      * @param idPerson ідентифікатор особи
      */
     public void deletePerson(String idPerson){
-        personRepository.deletePerson(idPerson);
+        studentRepository.deletePerson(idPerson);
         departmentRepository.removePersonFromDepartment(idPerson, findDepartmentLinkedToPerson(idPerson));
     }
 
@@ -225,7 +225,7 @@ public class Service {
      * @return об'єкт особи
      */
     public PersonEntity getPerson(String idPerson){
-        return personRepository.getPerson(idPerson);
+        return studentRepository.getPerson(idPerson);
     }
 
     /**
@@ -234,7 +234,7 @@ public class Service {
      * @return масив осіб
      */
     public PersonEntity[] getPersons(){
-        return personRepository.getPersons();
+        return studentRepository.getStudents();
     }
     //endregion
 }
