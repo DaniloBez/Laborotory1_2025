@@ -8,6 +8,7 @@ import Repository.DepartmentRepository;
 import Repository.FacultyRepository;
 import Repository.StudentRepository;
 import Repository.TeacherRepository;
+import Utils.SortUtils;
 
 import static java.lang.System.out;
 
@@ -346,27 +347,12 @@ public class Service {
      * @param middleName по батькові студента
      * @return знайдений студент або null, якщо такого немає
      */
-    public PersonEntity findStudentByFullName(String name, String surname, String middleName){
-        FacultyEntity[] faculties = facultyRepository.getFaculties();
-
-        for (FacultyEntity faculty : faculties) {
-            String[] id = faculty.getDepartmentIds();
-
-            for (String departmentId : id) {
-                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
-                String[] personId = department.getPersonIds();
-
-                for (String personId1 : personId) {
-                    PersonEntity person = personRepository.getPerson(personId1);
-
-                    if(person instanceof StudentEntity student) {
-                        if (student.getName().equals(name) && student.getSurname().equals(surname) && student.getMiddleName().equals(middleName))
-                            return person;
-                    }
-                }
-            }
+    public StudentEntity findStudentByFullName(String name, String surname, String middleName){
+        StudentEntity[] students = studentRepository.getStudents();
+        for (StudentEntity student : students) {
+            if (student.getName().equals(name) && student.getSurname().equals(surname) && student.getMiddleName().equals(middleName))
+                return student;
         }
-
         return null;
     }
 
@@ -376,23 +362,11 @@ public class Service {
      * @param group номер групи
      * @return знайдений студент або null, якщо такого немає
      */
-    public PersonEntity findStudentByGroup(int group){
-        FacultyEntity[] faculties = facultyRepository.getFaculties();
-
-        for (FacultyEntity faculty : faculties) {
-            String[] id = faculty.getDepartmentIds();
-
-            for (String departmentId : id) {
-                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
-                String[] personId = department.getPersonIds();
-
-                for (String personId1 : personId) {
-                    PersonEntity person = personRepository.getPerson(personId1);
-
-                    if (person instanceof StudentEntity && ((StudentEntity) person).getGroup() == group)
-                        return person;
-                }
-            }
+    public StudentEntity findStudentByGroup(int group){
+        StudentEntity[] students = studentRepository.getStudents();
+        for (StudentEntity student : students) {
+            if (student.getGroup() == group)
+                return student;
         }
 
         return null;
@@ -404,23 +378,11 @@ public class Service {
      * @param course номер курсу
      * @return знайдений студент або null, якщо такого немає
      */
-    public PersonEntity findStudentByCourse(int course){
-        FacultyEntity[] faculties = facultyRepository.getFaculties();
-
-        for (FacultyEntity faculty : faculties) {
-            String[] id = faculty.getDepartmentIds();
-
-            for (String departmentId : id) {
-                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
-                String[] personId = department.getPersonIds();
-
-                for (String personId1 : personId) {
-                    PersonEntity person = personRepository.getPerson(personId1);
-
-                    if (person instanceof StudentEntity && ((StudentEntity) person).getCourse() == course)
-                        return person;
-                }
-            }
+    public StudentEntity findStudentByCourse(int course){
+        StudentEntity[] students = studentRepository.getStudents();
+        for (StudentEntity student : students) {
+            if (student.getCourse() == course)
+                return student;
         }
 
         return null;
@@ -434,29 +396,34 @@ public class Service {
      * @param middleName по батькові викладача
      * @return знайдений викладач або null, якщо такого немає
      */
-    public PersonEntity findTeacherByFullName(String name, String surname, String middleName){
-        FacultyEntity[] faculties = facultyRepository.getFaculties();
-
-        for (FacultyEntity faculty : faculties) {
-            String[] id = faculty.getDepartmentIds();
-
-            for (String departmentId : id) {
-                DepartmentEntity department = departmentRepository.getDepartment(departmentId);
-                String[] personId = department.getPersonIds();
-
-                for (String personId1 : personId) {
-                    PersonEntity person = personRepository.getPerson(personId1);
-
-                    if(person instanceof TeacherEntity teacher) {
-                        if (teacher.getName().equals(name) && teacher.getSurname().equals(surname) && teacher.getMiddleName().equals(middleName))
-                            return person;
-                    }
-                }
-            }
+    public TeacherEntity findTeacherByFullName(String name, String surname, String middleName){
+        TeacherEntity[] teachers = teacherRepository.getTeachers();
+        for (TeacherEntity teacher : teachers) {
+            if (teacher.getName().equals(name) && teacher.getSurname().equals(surname) && teacher.getMiddleName().equals(middleName))
+                return teacher;
         }
 
         return null;
     }
+
+    public StudentEntity[] sortStudentsByCourse() {
+        StudentEntity[] students = studentRepository.getStudents();
+        SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
+        return students;
+    }
+
+    public StudentEntity[] sortStudentsByFullName() {
+        StudentEntity[] students = studentRepository.getStudents();
+        SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
+        return students;
+    }
+
+    public TeacherEntity[] sortTeachersByFullName() {
+        TeacherEntity[] teachers = teacherRepository.getTeachers();
+        SortUtils.quickSort(teachers, 0, teachers.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
+        return teachers;
+    }
+
 
     //endregion
 }
