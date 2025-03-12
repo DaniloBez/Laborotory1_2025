@@ -10,6 +10,10 @@ import Repository.StudentRepository;
 import Repository.TeacherRepository;
 import Utils.SortUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static java.lang.System.out;
 
 /**
@@ -309,7 +313,7 @@ public class Service {
      * @param isStudent ідентифікатор студента
      * @return ідентифікатор кафедри, або null, якщо кафедру не знайдено
      */
-    private String findDepartmentLinkedToStudent(String isStudent){
+    public String findDepartmentLinkedToStudent(String isStudent){
         for (DepartmentEntity department : departmentRepository.getDepartments()) {
             for (String personId : department.getStudentIds()) {
                 if (personId.equals(isStudent)) {
@@ -335,7 +339,7 @@ public class Service {
      *
      * @return масив студентів
      */
-    public StudentEntity[] getPersons(){
+    public StudentEntity[] getStudents(){
         return studentRepository.getStudents();
     }
 
@@ -407,19 +411,50 @@ public class Service {
     }
 
     public StudentEntity[] sortStudentsByCourse() {
-        StudentEntity[] students = studentRepository.getStudents();
+        StudentEntity[] students = getStudents();
         SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
         return students;
     }
+    
+    /**
+     * Повертає масив студентів, які належать до вказаної кафедри, відсортований за курсами у зростаючому порядку.
+     *
+     * <p>Метод проходить по всіх студентах, визначає, чи належать вони до заданої кафедри
+     * (шляхом виклику {@code findDepartmentLinkedToStudent(student.getId())}) та формує
+     * список таких студентів. Потім цей список конвертується в масив і сортується за курсами.</p>
+     *
+     * @param idDepartment ідентифікатор кафедри, за яким відбираються студенти
+     * @return масив студентів цієї кафедри, відсортований за курсом у зростаючому порядку
+     */
+    public StudentEntity[] sortStudentsByCourseInDepartment(String idDepartment) {
+        List<StudentEntity> studentList = new ArrayList<>(); // Створюємо список
+
+        for (StudentEntity student : getStudents()) {
+            String departmentId = findDepartmentLinkedToStudent(student.getId());
+            if (departmentId != null && departmentId.equals(idDepartment)) {
+                studentList.add(student); // Додаємо студента до списку
+            }
+        }
+
+        StudentEntity[] students = studentList.toArray(new StudentEntity[0]);
+
+        // Сортуємо масив за курсом
+        SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
+
+        return students;
+    }
+
+
+
 
     public StudentEntity[] sortStudentsByFullName() {
-        StudentEntity[] students = studentRepository.getStudents();
+        StudentEntity[] students = getStudents();
         SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
         return students;
     }
 
     public TeacherEntity[] sortTeachersByFullName() {
-        TeacherEntity[] teachers = teacherRepository.getTeachers();
+        TeacherEntity[] teachers = getTeachers();
         SortUtils.quickSort(teachers, 0, teachers.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
         return teachers;
     }
