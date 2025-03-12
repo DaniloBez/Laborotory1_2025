@@ -8,8 +8,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -768,7 +770,7 @@ public class ServiceTest {
 
     @ParameterizedTest
     @MethodSource("studentArrayProvider")
-    void testListStudentsByCourse(StudentEntity[] students) {
+    void testSortStudentsByCourse(StudentEntity[] students) {
         FacultyEntity faculty = new FacultyEntity("Faculty");
         service.createFaculty(faculty);
 
@@ -788,6 +790,44 @@ public class ServiceTest {
         // Перевіряємо, чи відсортований список збігається з очікуваним
         assertArrayEquals(expectedSortedStudents, sortedStudents);
     }
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
+    void testSortStudentsByCourseInDepartment(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        // Створюємо студентів і додаємо їх до кафедри
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+
+        // Отримуємо відсортований список студентів кафедри
+        StudentEntity[] sortedStudents = service.sortStudentsByCourseInDepartment(department.getId());
+
+        // Формуємо очікуваний список студентів, що належать саме до цієї кафедри
+        List<StudentEntity> expectedStudentsList = new ArrayList<>();
+        for (StudentEntity student : students) {
+            String linkedDepartmentId = service.findDepartmentLinkedToStudent(student.getId());
+            if (department.getId().equals(linkedDepartmentId)) {
+                expectedStudentsList.add(student);
+            }
+        }
+
+        // Сортуємо очікуваний список студентів кафедри за курсом
+        expectedStudentsList.sort(Comparator.comparing(StudentEntity::getCourse));
+
+        // Перетворюємо список на масив
+        StudentEntity[] expectedSortedStudents = expectedStudentsList.toArray(new StudentEntity[0]);
+
+        // Перевіряємо, чи співпадають очікуваний і фактичний відсортовані списки
+        assertArrayEquals(expectedSortedStudents, sortedStudents);
+    }
+
+
 
     @ParameterizedTest
     @MethodSource("studentArrayProvider")
