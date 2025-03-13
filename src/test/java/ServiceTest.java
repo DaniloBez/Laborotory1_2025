@@ -568,6 +568,55 @@ public class ServiceTest {
 
     @ParameterizedTest
     @MethodSource("studentArrayProvider")
+    void testGetStudentsByCourseInDepartment(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+
+        int targetCourse = 2;
+
+        StudentEntity[] filteredStudents = service.getStudentsByCourseInDepartment(department.getId(), targetCourse);
+
+        // Формуємо очікуваний масив студентів цього курсу
+        StudentEntity[] expectedStudents = Arrays.stream(students)
+                .filter(s -> s.getCourse() == targetCourse)
+                .toArray(StudentEntity[]::new);
+
+        // Перевіряємо
+        assertArrayEquals(expectedStudents, filteredStudents);
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
+    void testCantGetStudentsByCourseInDepartment(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+
+        int targetCourse = -1;
+
+        // Отримуємо студентів за неіснуючим курсом
+        StudentEntity[] filteredStudents = service.getStudentsByCourseInDepartment(department.getId(), targetCourse);
+
+        // Очікуємо порожній масив
+        assertEquals(0, filteredStudents.length);
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
     void testSortStudentsByFullNameInDepartment(StudentEntity[] students) {
         FacultyEntity faculty = new FacultyEntity("Faculty");
         service.createFaculty(faculty);

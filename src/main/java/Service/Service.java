@@ -553,6 +553,24 @@ public class Service {
         return students;
     }
 
+    /**
+     * Повертає масив студентів певного курсу в межах заданої кафедри.
+     *
+     * @param idDepartment ідентифікатор кафедри.
+     * @param course курс студентів, яких потрібно отримати.
+     * @return масив {@link StudentEntity}, що навчаються на вказаному курсі в цій кафедрі.
+     */
+    public StudentEntity[] getStudentsByCourseInDepartment(String idDepartment, int course) {
+        Object[] filteredStudents = new Object[0];
+
+        for(String idStudent : departmentRepository.getDepartment(idDepartment).getStudentIds()){
+            StudentEntity student = studentRepository.getStudent(idStudent);
+            if(student.getCourse() == course)
+                filteredStudents = addObjectToArray(filteredStudents, student);
+        }
+
+        return castObjectArrayToStudentEntityArray(filteredStudents);
+    }
 
     //endregion
 
