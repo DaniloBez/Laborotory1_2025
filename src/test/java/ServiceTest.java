@@ -481,6 +481,195 @@ public class ServiceTest {
 
         assertNull(studentRepo.getStudent(student.getId()));
     }
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
+    void testSortStudentsByCourse(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+        // Отримуємо список студентів
+        StudentEntity[] sortedStudents = service.sortStudentsByCourse();
+
+        // Сортуємо очікуваний список студентів за групою
+        StudentEntity[] expectedSortedStudents = Arrays.copyOf(students, students.length);
+        Arrays.sort(expectedSortedStudents, Comparator.comparing(StudentEntity::getCourse));
+
+        // Перевіряємо, чи відсортований список збігається з очікуваним
+        assertArrayEquals(expectedSortedStudents, sortedStudents);
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
+    void testSortStudentsByCourseInDepartment(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        // Створюємо студентів і додаємо їх до кафедри
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+
+        // Отримуємо відсортований список студентів кафедри
+        StudentEntity[] sortedStudents = service.sortStudentsByCourseInDepartment(department.getId());
+
+        // Формуємо очікуваний список студентів, що належать саме до цієї кафедри
+        List<StudentEntity> expectedStudentsList = new ArrayList<>();
+        for (StudentEntity student : students) {
+            String linkedDepartmentId = service.findDepartmentLinkedToStudent(student.getId());
+            if (department.getId().equals(linkedDepartmentId)) {
+                expectedStudentsList.add(student);
+            }
+        }
+
+        // Сортуємо очікуваний список студентів кафедри за курсом
+        expectedStudentsList.sort(Comparator.comparing(StudentEntity::getCourse));
+
+        // Перетворюємо список на масив
+        StudentEntity[] expectedSortedStudents = expectedStudentsList.toArray(new StudentEntity[0]);
+
+        // Перевіряємо, чи співпадають очікуваний і фактичний відсортовані списки
+        assertArrayEquals(expectedSortedStudents, sortedStudents);
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
+    void testSortStudentsByFullNameInFaculty(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+
+        StudentEntity[] sortedStudents = service.sortStudentsByFullNameInFaculty(faculty.getId());
+
+        StudentEntity[] expectedSortedStudents = Arrays.copyOf(students, students.length);
+        Arrays.sort(expectedSortedStudents, Comparator
+                .comparing(StudentEntity::getSurname)
+                .thenComparing(StudentEntity::getName)
+                .thenComparing(StudentEntity::getMiddleName));
+
+        // Перевіряємо
+        assertArrayEquals(expectedSortedStudents, sortedStudents);
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
+    void testSortStudentsByFullNameInDepartment(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+
+        StudentEntity[] sortedStudents = service.sortStudentsByFullNameInDepartment(department.getId());
+
+        StudentEntity[] expectedSortedStudents = Arrays.copyOf(students, students.length);
+        Arrays.sort(expectedSortedStudents, Comparator
+                .comparing(StudentEntity::getSurname)
+                .thenComparing(StudentEntity::getName)
+                .thenComparing(StudentEntity::getMiddleName));
+
+        // Перевіряємо
+        assertArrayEquals(expectedSortedStudents, sortedStudents);
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testFindStudentByFullName(StudentEntity student) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        service.createStudent(student, department.getId());
+        assertEquals(student, service.findStudentByFullName(student.getName(), student.getSurname(), student.getMiddleName()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testFindStudentByGroup(StudentEntity student) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        service.createStudent(student, department.getId());
+        assertEquals(student, service.findStudentByGroup(student.getGroup()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testCantFindStudentByGroup(StudentEntity student) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        service.createStudent(student, department.getId());
+        assertNull(service.findStudentByGroup(99));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testFindStudentByCourse(StudentEntity student) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        service.createStudent(student, department.getId());
+        assertEquals(student, service.findStudentByCourse(student.getCourse()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testCantFindStudentByCourse(StudentEntity student) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        service.createStudent(student, department.getId());
+        assertNull(service.findStudentByCourse(99));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testCantFindTeacherByFullName(StudentEntity student) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        TeacherEntity teacher = new TeacherEntity("teacherName", "teacherSurname", "teacherMiddleName");
+        assertNull(service.findStudentByFullName(teacher.getName(), teacher.getSurname(), teacher.getMiddleName()));
+
+        assertNull(service.findTeacherByFullName(student.getName(), student.getSurname(), student.getMiddleName()));
+    }
     //endregion
 
     //region Teacher
@@ -490,6 +679,7 @@ public class ServiceTest {
                 new TeacherEntity("teacher!!_!Name", "teacher!!_!Surname", "teacher!!_!MiddleName")
         );
     }
+
     static Stream<Arguments> teacherArrayProvider() {
         return Stream.of(
                 Arguments.of((Object) new TeacherEntity[]{
@@ -500,7 +690,6 @@ public class ServiceTest {
                 })
         );
     }
-
 
     @ParameterizedTest
     @MethodSource("teacherProvider")
@@ -677,85 +866,6 @@ public class ServiceTest {
    }
 
     @ParameterizedTest
-    @MethodSource("studentProvider")
-    void testFindStudentByFullName(StudentEntity student) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        service.createStudent(student, department.getId());
-        assertEquals(student, service.findStudentByFullName(student.getName(), student.getSurname(), student.getMiddleName()));
-    }
-
-    @ParameterizedTest
-    @MethodSource("studentProvider")
-    void testFindStudentByGroup(StudentEntity student) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        service.createStudent(student, department.getId());
-        assertEquals(student, service.findStudentByGroup(student.getGroup()));
-    }
-
-    @ParameterizedTest
-    @MethodSource("studentProvider")
-    void testCantFindStudentByGroup(StudentEntity student) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        service.createStudent(student, department.getId());
-        assertNull(service.findStudentByGroup(99));
-    }
-
-    @ParameterizedTest
-    @MethodSource("studentProvider")
-    void testFindStudentByCourse(StudentEntity student) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        service.createStudent(student, department.getId());
-        assertEquals(student, service.findStudentByCourse(student.getCourse()));
-    }
-    @ParameterizedTest
-    @MethodSource("studentProvider")
-    void testCantFindStudentByCourse(StudentEntity student) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        service.createStudent(student, department.getId());
-        assertNull(service.findStudentByCourse(99));
-    }
-
-    @ParameterizedTest
-    @MethodSource("studentProvider")
-    void testCantFindTeacherByFullName(StudentEntity student) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        TeacherEntity teacher = new TeacherEntity("teacherName", "teacherSurname", "teacherMiddleName");
-        assertNull(service.findStudentByFullName(teacher.getName(), teacher.getSurname(), teacher.getMiddleName()));
-
-        assertNull(service.findTeacherByFullName(student.getName(), student.getSurname(), student.getMiddleName()));
-    }
-
-    @ParameterizedTest
     @MethodSource("teacherProvider")
     void testFindTeacherByFullName(TeacherEntity teacher) {
         FacultyEntity faculty = new FacultyEntity("Faculty");
@@ -769,94 +879,8 @@ public class ServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("studentArrayProvider")
-    void testSortStudentsByCourse(StudentEntity[] students) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        for (StudentEntity student : students) {
-            service.createStudent(student, department.getId());
-        }
-        // Отримуємо список студентів
-        StudentEntity[] sortedStudents = service.sortStudentsByCourse();
-
-        // Сортуємо очікуваний список студентів за групою
-        StudentEntity[] expectedSortedStudents = Arrays.copyOf(students, students.length);
-        Arrays.sort(expectedSortedStudents, Comparator.comparing(StudentEntity::getCourse));
-
-        // Перевіряємо, чи відсортований список збігається з очікуваним
-        assertArrayEquals(expectedSortedStudents, sortedStudents);
-    }
-
-    @ParameterizedTest
-    @MethodSource("studentArrayProvider")
-    void testSortStudentsByCourseInDepartment(StudentEntity[] students) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        // Створюємо студентів і додаємо їх до кафедри
-        for (StudentEntity student : students) {
-            service.createStudent(student, department.getId());
-        }
-
-        // Отримуємо відсортований список студентів кафедри
-        StudentEntity[] sortedStudents = service.sortStudentsByCourseInDepartment(department.getId());
-
-        // Формуємо очікуваний список студентів, що належать саме до цієї кафедри
-        List<StudentEntity> expectedStudentsList = new ArrayList<>();
-        for (StudentEntity student : students) {
-            String linkedDepartmentId = service.findDepartmentLinkedToStudent(student.getId());
-            if (department.getId().equals(linkedDepartmentId)) {
-                expectedStudentsList.add(student);
-            }
-        }
-
-        // Сортуємо очікуваний список студентів кафедри за курсом
-        expectedStudentsList.sort(Comparator.comparing(StudentEntity::getCourse));
-
-        // Перетворюємо список на масив
-        StudentEntity[] expectedSortedStudents = expectedStudentsList.toArray(new StudentEntity[0]);
-
-        // Перевіряємо, чи співпадають очікуваний і фактичний відсортовані списки
-        assertArrayEquals(expectedSortedStudents, sortedStudents);
-    }
-
-
-
-    @ParameterizedTest
-    @MethodSource("studentArrayProvider")
-    void testSortStudentsByFullNameInFaculty(StudentEntity[] students) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        for (StudentEntity student : students) {
-            service.createStudent(student, department.getId());
-        }
-
-        StudentEntity[] sortedStudents = service.sortStudentsByFullNameInFaculty(faculty.getId());
-
-        StudentEntity[] expectedSortedStudents = Arrays.copyOf(students, students.length);
-        Arrays.sort(expectedSortedStudents, Comparator
-                .comparing(StudentEntity::getSurname)
-                .thenComparing(StudentEntity::getName)
-                .thenComparing(StudentEntity::getMiddleName));
-
-        // Перевіряємо
-        assertArrayEquals(expectedSortedStudents, sortedStudents);
-    }
-
-    @ParameterizedTest
     @MethodSource("teacherArrayProvider")
-    void testSortTeachersByFullName(TeacherEntity[] teachers) {
+    void testSortTeachersByFullNameInFaculty(TeacherEntity[] teachers) {
         FacultyEntity faculty = new FacultyEntity("Faculty");
         service.createFaculty(faculty);
 
@@ -881,6 +905,32 @@ public class ServiceTest {
         assertArrayEquals(expectedSortedStudents, sortedStudents);
     }
 
+    @ParameterizedTest
+    @MethodSource("teacherArrayProvider")
+    void testSortTeachersByFullNameInDepartment(TeacherEntity[] teachers) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        for (TeacherEntity teacher : teachers) {
+            service.createTeacher(teacher, department.getId());
+        }
+
+        // Отримуємо відсортований масив
+        TeacherEntity[] sortedStudents = service.sortTeachersByFullNameInDepartment(department.getId());
+
+        // Формуємо очікуваний відсортований масив за ПІБ
+        TeacherEntity[] expectedSortedStudents = Arrays.copyOf(teachers, teachers.length);
+        Arrays.sort(expectedSortedStudents, Comparator
+                .comparing(TeacherEntity::getSurname)
+                .thenComparing(TeacherEntity::getName)
+                .thenComparing(TeacherEntity::getMiddleName));
+
+        // Перевіряємо
+        assertArrayEquals(expectedSortedStudents, sortedStudents);
+    }
 
     //endregion
 }

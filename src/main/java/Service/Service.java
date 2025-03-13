@@ -10,10 +10,6 @@ import Repository.StudentRepository;
 import Repository.TeacherRepository;
 import Utils.SortUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static java.lang.System.out;
 
 /**
@@ -322,6 +318,25 @@ public class Service {
 
         return teachers;
     }
+
+    /**
+     * Повертає масив викладачів певної кафедри, відсортований за повним іменем (прізвище, ім'я, по батькові).
+     *
+     * @param idDepartment ідентифікатор кафедри, викладачів якої потрібно відсортувати.
+     * @return масив {@link TeacherEntity}, відсортований за повним іменем у зростаючому порядку.
+     */
+    public TeacherEntity[] sortTeachersByFullNameInDepartment(String idDepartment) {
+        Object[] filteredTeachers = new Object[0];
+
+        for(String idTeacher :  departmentRepository.getDepartment(idDepartment).getTeacherIds())
+            filteredTeachers = addObjectToArray(filteredTeachers,teacherRepository.getTeacher(idTeacher));
+
+        TeacherEntity[] teachers = castObjectArrayToTeacherEntityArray(filteredTeachers);
+
+        SortUtils.quickSort(teachers, 0, teachers.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
+
+        return teachers;
+    }
     //endregion
 
     //region Student
@@ -517,6 +532,28 @@ public class Service {
 
         return students;
     }
+
+    /**
+     * Повертає масив студентів, які належать до заданої кафедри, відсортований за повним іменем
+     * (прізвище, ім'я, по батькові) у порядку зростання.
+     *
+     * @param idDepartment ідентифікатор кафедри, за якою здійснюється фільтрація студентів
+     * @return відсортований масив {@code StudentEntity[]} студентів кафедри
+     */
+    public StudentEntity[] sortStudentsByFullNameInDepartment(String idDepartment) {
+        Object[] filteredStudents = new Object[0];
+
+        for(String idStudent : departmentRepository.getDepartment(idDepartment).getStudentIds())
+            filteredStudents = addObjectToArray(filteredStudents, studentRepository.getStudent(idStudent));
+
+        StudentEntity[] students = castObjectArrayToStudentEntityArray(filteredStudents);
+
+        SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
+
+        return students;
+    }
+
+
     //endregion
 
     /**
