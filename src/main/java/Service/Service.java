@@ -85,7 +85,24 @@ public class Service {
         else
             out.println("Факультет не знайдено!");
     }
-
+    /**
+     * Шукає факультет за вказаною назвою.
+     *
+     * <p>Метод перебирає всі факультети, отримані за допомогою {@code getFaculties()},
+     * і повертає факультет, назва якого збігається з переданим параметром {@code name}.
+     * Якщо факультет з такою назвою не знайдено, повертає {@code null}.</p>
+     *
+     * @param name назва факультету, який потрібно знайти
+     * @return {@link FacultyEntity} з відповідною назвою, або {@code null}, якщо факультет не знайдено
+     */
+    public FacultyEntity findFacultyByName(String name) {
+        FacultyEntity[] faculties = getFaculties();
+        for(FacultyEntity faculty : faculties){
+            if(faculty.getName().equals(name))
+                return faculty;
+        }
+        return null;
+    }
     /**
      * Отримує факультет за ідентифікатором.
      *
@@ -154,6 +171,24 @@ public class Service {
         }
         else
             out.println("Кафедру не знайдено!");
+    }
+    /**
+     * Повертає об'єкт {@link DepartmentEntity}, що має вказане ім'я.
+     *
+     * <p>Метод здійснює пошук серед усіх кафедр за їх іменем.
+     * Якщо кафедру з таким ім'ям знайдено, вона повертається.
+     * Якщо жодна кафедра не відповідає заданому імені, повертається {@code null}.</p>
+     *
+     * @param name ім'я кафедри, яку потрібно знайти
+     * @return об'єкт {@link DepartmentEntity}, що має відповідне ім'я, або {@code null}, якщо такої кафедри немає
+     */
+    public DepartmentEntity findDepartmentByName(String name) {
+        DepartmentEntity[] departments = getDepartments();
+        for(DepartmentEntity department : departments){
+            if(department.getName().equals(name))
+                return department;
+        }
+        return null;
     }
 
     /**

@@ -48,6 +48,22 @@ public class ServiceTest {
 
     @ParameterizedTest
     @MethodSource("facultyProvider")
+    void testFindFacultyByName(FacultyEntity faculty) {
+        service.createFaculty(faculty);
+
+        assertEquals(faculty, service.findFacultyByName(faculty.getName()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("facultyProvider")
+    void testCantFindFacultyByName(FacultyEntity faculty) {
+        service.createFaculty(faculty);
+
+        assertNull(service.findFacultyByName(""));
+    }
+
+    @ParameterizedTest
+    @MethodSource("facultyProvider")
     void testUpdateFaculty(FacultyEntity faculty){
         service.createFaculty(faculty);
 
@@ -166,6 +182,29 @@ public class ServiceTest {
 
         assertEquals(1, deptRepo.getDepartments().length);
         assertEquals(department, deptRepo.getDepartment(department.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("departmentProvider")
+    void testFindDepartmentByName(DepartmentEntity department) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        service.createDepartment(department, faculty.getId());
+
+        assertEquals(department, service.findDepartmentByName(department.getName()));
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("departmentProvider")
+    void testCantFindDepartmentByName(DepartmentEntity department) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        service.createDepartment(department, faculty.getId());
+
+        assertNull(service.findDepartmentByName(""));
     }
 
     @ParameterizedTest
