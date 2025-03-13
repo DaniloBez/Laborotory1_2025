@@ -562,7 +562,6 @@ public class ServiceTest {
                 .thenComparing(StudentEntity::getName)
                 .thenComparing(StudentEntity::getMiddleName));
 
-        // Перевіряємо
         assertArrayEquals(expectedSortedStudents, sortedStudents);
     }
 
@@ -612,6 +611,37 @@ public class ServiceTest {
 
         // Очікуємо порожній масив
         assertEquals(0, filteredStudents.length);
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentArrayProvider")
+    void testSortStudentsByFullNameForCourseInDepartment(StudentEntity[] students) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        for (StudentEntity student : students) {
+            service.createStudent(student, department.getId());
+        }
+
+        int targetCourse = 2;
+
+        // Виклик методу, який тестуємо
+        StudentEntity[] sortedStudents = service.sortStudentsByFullNameForCourseInDepartment(department.getId(), targetCourse);
+
+        // Формуємо очікуваний масив: студенти тільки зазначеного курсу
+        StudentEntity[] expectedSortedStudents = Arrays.stream(students)
+                .filter(s -> s.getCourse() == targetCourse) // відбір за курсом
+                .sorted(Comparator
+                        .comparing(StudentEntity::getSurname)
+                        .thenComparing(StudentEntity::getName)
+                        .thenComparing(StudentEntity::getMiddleName)) // сортування за ПІБ
+                .toArray(StudentEntity[]::new);
+
+        // Перевіряємо
+        assertArrayEquals(expectedSortedStudents, sortedStudents);
     }
 
 

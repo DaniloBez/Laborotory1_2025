@@ -506,7 +506,7 @@ public class Service {
         StudentEntity[] students = castObjectArrayToStudentEntityArray(filteredStudents);
 
         // Сортуємо масив за курсом
-        SortUtils.quickSort(filteredStudents, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
+        SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
 
         return students;
     }
@@ -570,6 +570,19 @@ public class Service {
         }
 
         return castObjectArrayToStudentEntityArray(filteredStudents);
+    }
+
+    /**
+     * Повертає масив студентів зазначеного курсу в межах кафедри, відсортований за ПІБ.
+     *
+     * @param idDepartment ID кафедри
+     * @param course курс студентів
+     * @return відсортований масив студентів певного курсу цієї кафедри
+     */
+    public StudentEntity[] sortStudentsByFullNameForCourseInDepartment(String idDepartment, int course) {
+        StudentEntity[] filteredStudents = getStudentsByCourseInDepartment(idDepartment, course);
+        SortUtils.quickSort(filteredStudents, 0, filteredStudents.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
+        return filteredStudents;
     }
 
     //endregion
