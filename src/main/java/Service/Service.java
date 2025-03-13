@@ -269,6 +269,59 @@ public class Service {
     public TeacherEntity[] getTeachers(){
         return teacherRepository.getTeachers();
     }
+
+    /**
+     * Знаходить викладача за повним ім'ям.
+     *
+     * @param name ім'я викладача
+     * @param surname прізвище викладача
+     * @param middleName по батькові викладача
+     * @return знайдений викладач або null, якщо такого немає
+     */
+    public TeacherEntity findTeacherByFullName(String name, String surname, String middleName){
+        TeacherEntity[] teachers = teacherRepository.getTeachers();
+        for (TeacherEntity teacher : teachers) {
+            if (teacher.getName().equals(name) && teacher.getSurname().equals(surname) && teacher.getMiddleName().equals(middleName))
+                return teacher;
+        }
+
+        return null;
+    }
+
+    /**
+     * Перетворює масив об'єктів у масив {@code TeacherEntity[]}.
+     *
+     * @param objects масив об'єктів {@code Object[]}
+     * @return масив {@code TeacherEntity[]}
+     */
+    private TeacherEntity[] castObjectArrayToTeacherEntityArray(Object[] objects) {
+        TeacherEntity[] teachers = new TeacherEntity[objects.length];
+        for (int i = 0; i < objects.length; i++) {
+            teachers[i] = (TeacherEntity) objects[i]; // Нисхідне перетворення
+        }
+        return teachers;
+    }
+
+    /**
+     * Повертає масив викладачів факультету, відсортований за повним ім'ям (прізвище, ім'я, по батькові).
+     *
+     * @param idFaculty ідентифікатор факультету
+     * @return відсортований масив {@code TeacherEntity[]} викладачів факультету
+     */
+    public TeacherEntity[] sortTeachersByFullNameInFaculty(String idFaculty) {
+        String[] departments = facultyRepository.getFaculty(idFaculty).getDepartmentIds();
+        Object[] filteredTeachers = new Object[0];
+
+        for (String idDepartment : departments)
+            for(String idTeacher :  departmentRepository.getDepartment(idDepartment).getTeacherIds())
+                filteredTeachers = addObjectToArray(filteredTeachers,teacherRepository.getTeacher(idTeacher));
+
+        TeacherEntity[] teachers = castObjectArrayToTeacherEntityArray(filteredTeachers);
+
+        SortUtils.quickSort(teachers, 0, teachers.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
+
+        return teachers;
+    }
     //endregion
 
     //region Student
@@ -393,72 +446,90 @@ public class Service {
     }
 
     /**
-     * Знаходить викладача за повним ім'ям.
+     * Повертає масив усіх студентів, відсортований за курсом у порядку зростання.
      *
-     * @param name ім'я викладача
-     * @param surname прізвище викладача
-     * @param middleName по батькові викладача
-     * @return знайдений викладач або null, якщо такого немає
+     * @return відсортований масив {@code StudentEntity[]} студентів
      */
-    public TeacherEntity findTeacherByFullName(String name, String surname, String middleName){
-        TeacherEntity[] teachers = teacherRepository.getTeachers();
-        for (TeacherEntity teacher : teachers) {
-            if (teacher.getName().equals(name) && teacher.getSurname().equals(surname) && teacher.getMiddleName().equals(middleName))
-                return teacher;
-        }
-
-        return null;
-    }
-
     public StudentEntity[] sortStudentsByCourse() {
         StudentEntity[] students = getStudents();
         SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
         return students;
     }
-    
+
     /**
-     * Повертає масив студентів, які належать до вказаної кафедри, відсортований за курсами у зростаючому порядку.
+     * Перетворює масив Object[] у масив StudentEntity[] шляхом нисхідного перетворення.
      *
-     * <p>Метод проходить по всіх студентах, визначає, чи належать вони до заданої кафедри
-     * (шляхом виклику {@code findDepartmentLinkedToStudent(student.getId())}) та формує
-     * список таких студентів. Потім цей список конвертується в масив і сортується за курсами.</p>
+     * @param objects масив об'єктів
+     * @return масив студентів
+     */
+    private StudentEntity[] castObjectArrayToStudentEntityArray(Object[] objects) {
+        StudentEntity[] students = new StudentEntity[objects.length];
+        for (int i = 0; i < objects.length; i++) {
+            students[i] = (StudentEntity) objects[i]; // Нисхідне перетворення
+        }
+        return students;
+    }
+
+    /**
+     * Повертає масив студентів, які навчаються на вказаній кафедрі,
+     * відсортований за курсом.
      *
-     * @param idDepartment ідентифікатор кафедри, за яким відбираються студенти
-     * @return масив студентів цієї кафедри, відсортований за курсом у зростаючому порядку
+     * @param idDepartment ідентифікатор кафедри
+     * @return відсортований масив {@code StudentEntity[]} студентів кафедри
      */
     public StudentEntity[] sortStudentsByCourseInDepartment(String idDepartment) {
-        List<StudentEntity> studentList = new ArrayList<>(); // Створюємо список
+        Object[] filteredStudents = new Object[0]; // Початковий порожній масив
 
         for (StudentEntity student : getStudents()) {
             String departmentId = findDepartmentLinkedToStudent(student.getId());
             if (departmentId != null && departmentId.equals(idDepartment)) {
-                studentList.add(student); // Додаємо студента до списку
+                // Додаємо студента в масив Object
+                filteredStudents = addObjectToArray(filteredStudents, student);
             }
         }
 
-        StudentEntity[] students = studentList.toArray(new StudentEntity[0]);
+        StudentEntity[] students = castObjectArrayToStudentEntityArray(filteredStudents);
 
         // Сортуємо масив за курсом
-        SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
+        SortUtils.quickSort(filteredStudents, 0, students.length - 1, SortUtils.SortType.BY_COURSE, true);
 
         return students;
     }
 
+    /**
+     * Повертає масив студентів, які навчаються на факультеті з вказаним ідентифікатором,
+     * відсортований за повним ім'ям (прізвище, ім'я, по батькові).
+     *
+     * @param idFaculty ідентифікатор факультету
+     * @return відсортований масив {@code StudentEntity[]} студентів факультету
+     */
+    public StudentEntity[] sortStudentsByFullNameInFaculty(String idFaculty) {
+        String[] departments = facultyRepository.getFaculty(idFaculty).getDepartmentIds();
+        Object[] filteredStudents = new Object[0];
 
+        for (String idDepartment : departments)
+            for(String idStudent :  departmentRepository.getDepartment(idDepartment).getStudentIds())
+                filteredStudents = addObjectToArray(filteredStudents,studentRepository.getStudent(idStudent));
 
+        StudentEntity[] students = castObjectArrayToStudentEntityArray(filteredStudents);
 
-    public StudentEntity[] sortStudentsByFullName() {
-        StudentEntity[] students = getStudents();
         SortUtils.quickSort(students, 0, students.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
+
         return students;
     }
-
-    public TeacherEntity[] sortTeachersByFullName() {
-        TeacherEntity[] teachers = getTeachers();
-        SortUtils.quickSort(teachers, 0, teachers.length - 1, SortUtils.SortType.BY_FULL_NAME, true);
-        return teachers;
-    }
-
-
     //endregion
+
+    /**
+     * Додає новий об'єкт до масиву об'єктів, створюючи новий масив розміром на 1 більший.
+     *
+     * @param original вихідний масив об'єктів
+     * @param newElement об'єкт, який потрібно додати
+     * @return новий масив об'єктів з доданим елементом
+     */
+    private Object[] addObjectToArray(Object[] original, Object newElement) {
+        Object[] newArray = new Object[original.length + 1];
+        System.arraycopy(original, 0, newArray, 0, original.length);
+        newArray[newArray.length - 1] = newElement;
+        return newArray;
+    }
 }

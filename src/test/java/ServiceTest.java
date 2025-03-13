@@ -831,7 +831,7 @@ public class ServiceTest {
 
     @ParameterizedTest
     @MethodSource("studentArrayProvider")
-    void testSortStudentsByFullName(StudentEntity[] students) {
+    void testSortStudentsByFullNameInFaculty(StudentEntity[] students) {
         FacultyEntity faculty = new FacultyEntity("Faculty");
         service.createFaculty(faculty);
 
@@ -842,10 +842,8 @@ public class ServiceTest {
             service.createStudent(student, department.getId());
         }
 
-        // Отримуємо відсортований масив
-        StudentEntity[] sortedStudents = service.sortStudentsByFullName();
+        StudentEntity[] sortedStudents = service.sortStudentsByFullNameInFaculty(faculty.getId());
 
-        // Формуємо очікуваний відсортований масив за ПІБ
         StudentEntity[] expectedSortedStudents = Arrays.copyOf(students, students.length);
         Arrays.sort(expectedSortedStudents, Comparator
                 .comparing(StudentEntity::getSurname)
@@ -870,7 +868,7 @@ public class ServiceTest {
         }
 
         // Отримуємо відсортований масив
-        TeacherEntity[] sortedStudents = service.sortTeachersByFullName();
+        TeacherEntity[] sortedStudents = service.sortTeachersByFullNameInFaculty(faculty.getId());
 
         // Формуємо очікуваний відсортований масив за ПІБ
         TeacherEntity[] expectedSortedStudents = Arrays.copyOf(teachers, teachers.length);
