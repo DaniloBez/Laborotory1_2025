@@ -31,16 +31,16 @@ import Service.*;
 import Repository.*;
 import Entity.*;
 import Utils.DataInput;
-import Entity.Person.StudentEntity;
-import Utils.*;
 
 import static java.lang.System.out;
 
 public class Main {
     private static Service service;
+    /**
+     * Відповідає за взаємодію з користувачем через меню та виклик відповідних методів обробки.
+     */
     public static void main(String[] args) {
         init();
-
         out.println("Вас вітає програма для роботи з університетом!");
 
         do {
@@ -59,34 +59,23 @@ public class Main {
                     """);
 
             switch (DataInput.getInt(1, 10)){
-                case 1:
-                    facultyCRUD();
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-                case 7:
-                    break;
-                case 8:
-                    break;
-                case 9:
-                    break;
-                case 10:
-                    OutputSortStudentsByFullNameForCourseInDepartment();
-                    break;
+                case 1 -> facultyCRUD();
+                case 2 -> departmentCRUD();
+                case 3 -> {
+                    out.println("""
+                            Виберіть дію:
+                            1) Додати/видалити/редагувати студента до кафедри.
+                            2) Додати/видалити/редагувати викладача до кафедри
+                            """);
+                    if (DataInput.getInt(1, 2) == 1)
+                        studentCRUD();
+                    else
+                        teacherCRUD();
+                }
+                case 10 -> OutputSortStudentsByFullNameForCourseInDepartment();
             }
-
-            out.println("Продовжити?");
         } while (DataInput.getBoolean());
     }
-
     private static void OutputSortStudentsByFullNameForCourseInDepartment() {
         out.print("Введіть кафедру: ");
         String departmentName = DataInput.getString();
@@ -94,35 +83,263 @@ public class Main {
         int course = DataInput.getInt(1, 6);
         printArray(service.sortStudentsByFullNameForCourseInDepartment(service.findDepartmentByName(departmentName).getId(), course));
     }
-
-    private static void facultyCRUD(){
+    /**
+     * Обробляє CRUD-операції для факультету.
+     */
+    private static void facultyCRUD() {
         out.println("""
                 Виберіть дію:
                 1) Створити факультет
                 2) Оновити факультет
                 3) Видалити факультет
                 """);
+        switch (DataInput.getInt(1, 3)) {
+            case 1 -> createFaculty();
+            case 2 -> updateFaculty();
+            case 3 -> deleteFaculty();
+        }
+    }
+
+    /**
+     * Створює новий факультет на основі введених користувачем даних.
+     */
+    private static void createFaculty() {
+        out.println("Введіть назву факультету: ");
+        service.createFaculty(new FacultyEntity(DataInput.inputName()));
+    }
+
+    /**
+     * Оновлює інформацію про факультет.
+     */
+    private static void updateFaculty() {
+        out.println("Виберіть факультет у якого хочете оновити інформацію: ");
+        out.println(printArray(service.getFaculties()));
+        String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+
+        out.println("Введіть нову інформацію (назву): ");
+        service.updateFaculty(facultyID, new FacultyEntity(DataInput.inputName()));
+    }
+
+    /**
+     * Видаляє факультет, вибраний користувачем.
+     */
+    private static void deleteFaculty() {
+        out.println("Виберіть факультет який хочете видалити: ");
+        out.println(printArray(service.getFaculties()));
+        service.deleteFaculty(service.findFacultyByName(DataInput.inputName()).getId());
+    }
+
+    /**
+     * Обробляє CRUD-операції для кафедри.
+     */
+    private static void departmentCRUD() {
+        out.println("""
+                Виберіть дію:
+                1) Створити кафедру
+                2) Оновити кафедру
+                3) Видалити кафедру
+                """);
+        switch (DataInput.getInt(1, 3)) {
+            case 1 -> createDepartment();
+            case 2 -> updateDepartment();
+            case 3 -> deleteDepartment();
+        }
+    }
+
+    /**
+     * Створює нову кафедру на обраному факультеті.
+     */
+    private static void createDepartment() {
+        out.println("Виберіть факультет у якого хочете створити кафедру: ");
+        out.println(printArray(service.getFaculties()));
+        String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+
+        out.println("Введіть назву кафедри: ");
+        service.createDepartment(new DepartmentEntity(DataInput.inputName()), facultyID);
+    }
+
+    /**
+     * Оновлює інформацію про кафедру.
+     */
+    private static void updateDepartment() {
+        out.println("Виберіть кафедру у якій хочете оновити інформацію: ");
+        out.println(printArray(service.getDepartments()));
+        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
+
+        out.println("Введіть нову інформацію (назву): ");
+        service.updateDepartment(departmentID, new DepartmentEntity(DataInput.inputName()));
+    }
+
+    /**
+     * Видаляє кафедру, вибрану користувачем.
+     */
+    private static void deleteDepartment() {
+        out.println("Виберіть кафедру яку хочете видалити: ");
+        out.println(printArray(service.getDepartments()));
+        service.deleteDepartment(service.findDepartmentByName(DataInput.inputName()).getId());
+    }
+
+    /**
+     * Обробляє CRUD-операції для студента.
+     */
+    private static void studentCRUD(){
+        out.println("""
+                Виберіть дію:
+                1) Створити студента
+                2) Оновити студента
+                3) Видалити студента
+                """);
         switch (DataInput.getInt(1, 3)){
             case 1:
-                createFaculty();
+                createStudent();
                 break;
             case 2:
+                updateStudent();
                 break;
             case 3:
+                deleteStudent();
                 break;
         }
     }
 
-    private static void createFaculty(){
-        service.createFaculty(new FacultyEntity(DataInput.getString()));
+    /**
+     * Створює нового студента на кафедрі
+     */
+    private static void createStudent(){
+        out.println("Виберіть кафедру у якого хочете створити студента: ");
+        out.println(printArray(service.getDepartments()));
+        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
+
+        out.println("Заповніть дані");
+        service.createStudent(getStudentEntityFromConsole(), departmentID);
     }
 
-    private static void updateFaculty(){
-        out.println("Виберіть факультет у якого хочете оновити інформацію: ");
-        out.println(printArray(service.getFaculties()));
-        //TODO
+    /**
+     * Оновлює інформацію про студента
+     */
+    private static void updateStudent(){
+        out.println("Виберіть студента у якого хочете оновити інформацію: ");
+        out.println(printArray(service.getStudents()));
+
+        TeacherEntity studentFullName = getTeacherEntityFromConsole();
+
+        String studentID = service.findStudentByFullName(studentFullName.getName(), studentFullName.getSurname(), studentFullName.getMiddleName()).getId();
+
+        out.println("Введіть нову інформацію: ");
+        service.updateStudent(studentID, getStudentEntityFromConsole());
     }
 
+    /**
+     * Видаляє студента, вибраного користувачем.
+     */
+    private static void deleteStudent(){
+        out.println("Виберіть студента якого хочете видалити: ");
+        out.println(printArray(service.getStudents()));
+
+        TeacherEntity studentFullName = getTeacherEntityFromConsole();
+
+        service.deleteStudent(service.findStudentByFullName(studentFullName.getName(),
+                studentFullName.getSurname(), studentFullName.getMiddleName()).getId());
+    }
+
+    /**
+     * Обробляє CRUD-операції для вчителя.
+     */
+    private static void teacherCRUD(){
+        out.println("""
+                Виберіть дію:
+                1) Створити вчителя
+                2) Оновити вчителя
+                3) Видалити вчителя
+                """);
+        switch (DataInput.getInt(1, 3)){
+            case 1 -> createTeacher();
+            case 2 -> updateTeacher();
+            case 3 -> deleteTeacher();
+        }
+    }
+
+    /**
+     * Створює нового вчителя на кафедрі
+     */
+    private static void createTeacher(){
+        out.println("Виберіть кафедру у якого хочете створити вчителя: ");
+        out.println(printArray(service.getDepartments()));
+        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
+
+        out.println("Заповніть дані");
+        service.createTeacher(getTeacherEntityFromConsole(), departmentID);
+    }
+
+    /**
+     * Оновлює інформацію про вчителя
+     */
+    private static void updateTeacher(){
+        out.println("Виберіть вчителя у якого хочете оновити інформацію: ");
+        out.println(printArray(service.getTeachers()));
+
+        TeacherEntity teacherFullName = getTeacherEntityFromConsole();
+
+        String teacherID = service.findTeacherByFullName(teacherFullName.getName(), teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId();
+
+        out.println("Введіть нову інформацію: ");
+        service.updateTeacher(teacherID, getTeacherEntityFromConsole());
+    }
+
+    /**
+     * Видаляє вчителя, вибраного користувачем.
+     */
+    private static void deleteTeacher(){
+        out.println("Виберіть вчителя якого хочете видалити: ");
+        out.println(printArray(service.getTeachers()));
+
+        TeacherEntity teacherFullName = getTeacherEntityFromConsole();
+
+        service.deleteTeacher(service.findStudentByFullName(teacherFullName.getName(),
+                teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId());
+    }
+
+    /**
+     *  Повертає студента, створеного користувачем.
+     */
+    private static StudentEntity getStudentEntityFromConsole(){
+        out.println("Введіть ім'я: ");
+        String name = DataInput.inputName();
+
+        out.println("Введіть прізвище: ");
+        String surname = DataInput.inputName();
+
+        out.println("Введіть по батькові: ");
+        String middleName = DataInput.inputName();
+
+        out.println("Введіть курс: ");
+        int course = DataInput.getInt(1, 6);
+
+        out.println("Введіть групу: ");
+        int group = DataInput.getInt(1, 15);
+
+        return new StudentEntity(name, surname, middleName, course, group);
+    }
+
+    /**
+     *  Повертає вчителя, створеного користувачем.
+     */
+    private static TeacherEntity getTeacherEntityFromConsole(){
+        out.println("Введіть ім'я: ");
+        String name = DataInput.inputName();
+
+        out.println("Введіть прізвище: ");
+        String surname = DataInput.inputName();
+
+        out.println("Введіть по батькові: ");
+        String middleName = DataInput.inputName();
+
+        return new TeacherEntity(name, surname, middleName);
+    }
+
+    /**
+     * Ініціалізує сервіс
+     */
     private static void init(){
         StudentRepository studentRepo = new StudentRepository();
         TeacherRepository teacherRepo = new TeacherRepository();
@@ -134,6 +351,9 @@ public class Main {
         fillDB();
     }
 
+    /**
+     * Заповнює базу даних даними
+     */
     private static void fillDB(){
         //region Faculty
         FacultyEntity FGN = new FacultyEntity("ФГН");
@@ -248,6 +468,9 @@ public class Main {
 
     }
 
+    /**
+     * Перетворює масив для зручного виводу у консоль
+     */
     private static String printArray(Object[] array) {
         StringBuilder result = new StringBuilder();
 
@@ -258,44 +481,3 @@ public class Main {
         return result.toString();
     }
 }
-///**
-// * Додає нового студента до кафедри за вказаним ідентифікатором кафедри.
-// *
-// * @param idDepartment ідентифікатор кафедри, до якої буде додано студента
-// */
-//public void createStudent(String idDepartment){
-//    createPerson(setSudentData(idDepartment), idDepartment);
-//}
-///**
-// * Отримує та перевіряє інформацію про особу (ім'я, прізвище або по батькові).
-// *
-// * @param personType тип особи (наприклад, "студента" чи "викладача")
-// * @param idDepartment ідентифікатор кафедри, до якої додається особа
-// * @return виправлене ім'я з великої літери, що містить лише літери
-// */
-//private String inputPersonInfo(String personType, String idDepartment){
-//    System.out.print("Введіть ім'я "+personType+", щоб додати його до кафедри "+getDepartment(idDepartment).getName()+": ");
-//    String info = DataInput.getString();
-//    while(info.isEmpty() || !info.matches("[a-zA-ZА-Яа-яЁёІіЇїЄє']+")){
-//        System.out.print("Ім'я студента може містити лише літери, спробуйте знову: ");
-//        info = DataInput.getString();
-//    }
-//    return Character.toUpperCase(info.charAt(0)) + info.substring(1).toLowerCase();
-//}
-//private StudentEntity setSudentData(String idDepartment) {
-//    String name = inputPersonInfo("студента", idDepartment);
-//    String surname = inputPersonInfo("студента", idDepartment);
-//    String middlename = inputPersonInfo("студента", idDepartment);
-//    System.out.println("Введіть курс навчання: ");
-//    int course = DataInput.getInt(1, 6);
-//    System.out.println("Введіть групу студента: ");
-//    int group = DataInput.getInt(0, 7);
-//    return new StudentEntity(name, surname, middlename, course, group);
-//}
-//public void deleteStudent(String idStudent){
-//    System.out.println("Ви успішно видалили студента!");
-//    deletePerson(idStudent);
-//}
-//public void updateStudent(String idStudent, StudentEntity newStudentData){
-//    personRepository.updatePerson(idStudent, newStudentData);
-//}
