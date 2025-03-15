@@ -48,6 +48,16 @@ public class ServiceTest {
 
     @ParameterizedTest
     @MethodSource("facultyProvider")
+    void testCantCreateFacultyWithNotUniqueName(FacultyEntity faculty) {
+        service.createFaculty(faculty);
+        service.createFaculty(faculty);
+
+        assertEquals(1, facultyRepo.getFaculties().length);
+        assertEquals(faculty, facultyRepo.getFaculty(faculty.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("facultyProvider")
     void testUpdateFaculty(FacultyEntity faculty){
         service.createFaculty(faculty);
 
@@ -162,6 +172,19 @@ public class ServiceTest {
         FacultyEntity faculty = new FacultyEntity("Faculty");
         service.createFaculty(faculty);
 
+        service.createDepartment(department, faculty.getId());
+
+        assertEquals(1, deptRepo.getDepartments().length);
+        assertEquals(department, deptRepo.getDepartment(department.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("departmentProvider")
+    void testCantCreateDepartmentWithNotUniqueName(DepartmentEntity department) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        service.createDepartment(department, faculty.getId());
         service.createDepartment(department, faculty.getId());
 
         assertEquals(1, deptRepo.getDepartments().length);
@@ -317,6 +340,22 @@ public class ServiceTest {
         DepartmentEntity department = new DepartmentEntity("Department");
         service.createDepartment(department, faculty.getId());
 
+        service.createStudent(student, department.getId());
+
+        assertEquals(1, studentRepo.getStudents().length);
+        assertEquals(student, studentRepo.getStudent(student.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("studentProvider")
+    void testCantCreateNotUniqueStudent(StudentEntity student) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        DepartmentEntity department = new DepartmentEntity("Department");
+        service.createDepartment(department, faculty.getId());
+
+        service.createStudent(student, department.getId());
         service.createStudent(student, department.getId());
 
         assertEquals(1, studentRepo.getStudents().length);

@@ -37,11 +37,19 @@ public class Service {
 
     //region Faculty
     /**
-     * Створює новий факультет.
+     * Створює новий, унікальний за ім'ям факультет.
      *
      * @param faculty факультет для створення
      */
     public void createFaculty(FacultyEntity faculty){
+        FacultyEntity[] faculties = facultyRepository.getFaculties();
+        for(FacultyEntity facultyEntity : faculties){
+            if(facultyEntity.getName().equals(faculty.getName())){
+                out.println("Факультет з таким ім'ям вже існує");
+                return;
+            }
+        }
+
         facultyRepository.createFaculty(faculty);
     }
 
@@ -115,6 +123,14 @@ public class Service {
      */
     public void createDepartment(DepartmentEntity department, String idFaculty){
         if(facultyRepository.getFaculty(idFaculty) != null){
+            DepartmentEntity[] departments = departmentRepository.getDepartments();
+            for(DepartmentEntity departmentEntity : departments){
+                if(departmentEntity.getName().equals(department.getName())){
+                    out.println("Кафедра з таким ім'ям вже існує!");
+                    return;
+                }
+            }
+
             departmentRepository.createDepartment(department);
             facultyRepository.addDepartmentToFaculty(idFaculty, department.getId());
         }
@@ -275,6 +291,14 @@ public class Service {
      */
     public void createStudent(StudentEntity student, String idDepartment){
         if(departmentRepository.getDepartment(idDepartment) != null){
+            StudentEntity[] students = studentRepository.getStudents();
+            for(StudentEntity studentEntity : students){
+                if(studentEntity.equals(student)){
+                    out.println("Такий студент вже існує!");
+                    return;
+                }
+            }
+
             studentRepository.createStudent(student);
             departmentRepository.addStudentToDepartment(idDepartment, student.getId());
         }
