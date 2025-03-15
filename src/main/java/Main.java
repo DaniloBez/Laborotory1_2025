@@ -82,6 +82,9 @@ public class Main {
                     break;
             }
 
+            out.println(printArray(service.getFaculties()));
+            out.println(printArray(service.getStudents()));
+
             out.println("Продовжити?");
         } while (DataInput.getBoolean());
     }
@@ -98,20 +101,32 @@ public class Main {
                 createFaculty();
                 break;
             case 2:
+                updateFaculty();
                 break;
             case 3:
+                deleteFaculty();
                 break;
         }
     }
 
     private static void createFaculty(){
-        service.createFaculty(new FacultyEntity(DataInput.getString()));
+        out.println("Введіть назву факультету: ");
+        service.createFaculty(new FacultyEntity(DataInput.inputName()));
     }
 
     private static void updateFaculty(){
         out.println("Виберіть факультет у якого хочете оновити інформацію: ");
         out.println(printArray(service.getFaculties()));
-        //TODO
+        String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+
+        out.println("Введіть нову інформацію (назву): ");
+        service.updateFaculty(facultyID, new FacultyEntity(DataInput.inputName()));
+    }
+
+    private static void deleteFaculty(){
+        out.println("Виберіть факультет який хочете видалити: ");
+        out.println(printArray(service.getFaculties()));
+        service.deleteFaculty(service.findFacultyByName(DataInput.inputName()).getId());
     }
 
     private static void init(){
@@ -249,44 +264,3 @@ public class Main {
         return result.toString();
     }
 }
-///**
-// * Додає нового студента до кафедри за вказаним ідентифікатором кафедри.
-// *
-// * @param idDepartment ідентифікатор кафедри, до якої буде додано студента
-// */
-//public void createStudent(String idDepartment){
-//    createPerson(setSudentData(idDepartment), idDepartment);
-//}
-///**
-// * Отримує та перевіряє інформацію про особу (ім'я, прізвище або по батькові).
-// *
-// * @param personType тип особи (наприклад, "студента" чи "викладача")
-// * @param idDepartment ідентифікатор кафедри, до якої додається особа
-// * @return виправлене ім'я з великої літери, що містить лише літери
-// */
-//private String inputPersonInfo(String personType, String idDepartment){
-//    System.out.print("Введіть ім'я "+personType+", щоб додати його до кафедри "+getDepartment(idDepartment).getName()+": ");
-//    String info = DataInput.getString();
-//    while(info.isEmpty() || !info.matches("[a-zA-ZА-Яа-яЁёІіЇїЄє']+")){
-//        System.out.print("Ім'я студента може містити лише літери, спробуйте знову: ");
-//        info = DataInput.getString();
-//    }
-//    return Character.toUpperCase(info.charAt(0)) + info.substring(1).toLowerCase();
-//}
-//private StudentEntity setSudentData(String idDepartment) {
-//    String name = inputPersonInfo("студента", idDepartment);
-//    String surname = inputPersonInfo("студента", idDepartment);
-//    String middlename = inputPersonInfo("студента", idDepartment);
-//    System.out.println("Введіть курс навчання: ");
-//    int course = DataInput.getInt(1, 6);
-//    System.out.println("Введіть групу студента: ");
-//    int group = DataInput.getInt(0, 7);
-//    return new StudentEntity(name, surname, middlename, course, group);
-//}
-//public void deleteStudent(String idStudent){
-//    System.out.println("Ви успішно видалили студента!");
-//    deletePerson(idStudent);
-//}
-//public void updateStudent(String idStudent, StudentEntity newStudentData){
-//    personRepository.updatePerson(idStudent, newStudentData);
-//}
