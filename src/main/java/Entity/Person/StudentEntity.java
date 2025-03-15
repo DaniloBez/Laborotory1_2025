@@ -2,7 +2,6 @@ package Entity.Person;
 
 import Utils.IDGenerator;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +17,6 @@ public class StudentEntity{
      * Унікальний ідентифікатор для кожного екземпляра студента.
      */
     @Setter(AccessLevel.NONE)
-    @EqualsAndHashCode.Exclude
     private final String id = IDGenerator.generateID() + hashCode();
 
     /**

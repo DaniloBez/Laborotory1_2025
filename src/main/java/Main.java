@@ -31,6 +31,8 @@ import Service.*;
 import Repository.*;
 import Entity.*;
 import Utils.DataInput;
+import Entity.Person.StudentEntity;
+import Utils.*;
 
 import static java.lang.System.out;
 
@@ -247,3 +249,44 @@ public class Main {
         return result.toString();
     }
 }
+///**
+// * Додає нового студента до кафедри за вказаним ідентифікатором кафедри.
+// *
+// * @param idDepartment ідентифікатор кафедри, до якої буде додано студента
+// */
+//public void createStudent(String idDepartment){
+//    createPerson(setSudentData(idDepartment), idDepartment);
+//}
+///**
+// * Отримує та перевіряє інформацію про особу (ім'я, прізвище або по батькові).
+// *
+// * @param personType тип особи (наприклад, "студента" чи "викладача")
+// * @param idDepartment ідентифікатор кафедри, до якої додається особа
+// * @return виправлене ім'я з великої літери, що містить лише літери
+// */
+//private String inputPersonInfo(String personType, String idDepartment){
+//    System.out.print("Введіть ім'я "+personType+", щоб додати його до кафедри "+getDepartment(idDepartment).getName()+": ");
+//    String info = DataInput.getString();
+//    while(info.isEmpty() || !info.matches("[a-zA-ZА-Яа-яЁёІіЇїЄє']+")){
+//        System.out.print("Ім'я студента може містити лише літери, спробуйте знову: ");
+//        info = DataInput.getString();
+//    }
+//    return Character.toUpperCase(info.charAt(0)) + info.substring(1).toLowerCase();
+//}
+//private StudentEntity setSudentData(String idDepartment) {
+//    String name = inputPersonInfo("студента", idDepartment);
+//    String surname = inputPersonInfo("студента", idDepartment);
+//    String middlename = inputPersonInfo("студента", idDepartment);
+//    System.out.println("Введіть курс навчання: ");
+//    int course = DataInput.getInt(1, 6);
+//    System.out.println("Введіть групу студента: ");
+//    int group = DataInput.getInt(0, 7);
+//    return new StudentEntity(name, surname, middlename, course, group);
+//}
+//public void deleteStudent(String idStudent){
+//    System.out.println("Ви успішно видалили студента!");
+//    deletePerson(idStudent);
+//}
+//public void updateStudent(String idStudent, StudentEntity newStudentData){
+//    personRepository.updatePerson(idStudent, newStudentData);
+//}

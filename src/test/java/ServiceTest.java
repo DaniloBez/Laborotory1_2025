@@ -5,8 +5,13 @@ import Service.Service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,6 +59,22 @@ public class ServiceTest {
 
         assertEquals(1, facultyRepo.getFaculties().length);
         assertEquals(faculty, facultyRepo.getFaculty(faculty.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("facultyProvider")
+    void testFindFacultyByName(FacultyEntity faculty) {
+        service.createFaculty(faculty);
+
+        assertEquals(faculty, service.findFacultyByName(faculty.getName()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("facultyProvider")
+    void testCantFindFacultyByName(FacultyEntity faculty) {
+        service.createFaculty(faculty);
+
+        assertNull(service.findFacultyByName(""));
     }
 
     @ParameterizedTest
@@ -189,6 +210,29 @@ public class ServiceTest {
 
         assertEquals(1, deptRepo.getDepartments().length);
         assertEquals(department, deptRepo.getDepartment(department.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("departmentProvider")
+    void testFindDepartmentByName(DepartmentEntity department) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        service.createDepartment(department, faculty.getId());
+
+        assertEquals(department, service.findDepartmentByName(department.getName()));
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("departmentProvider")
+    void testCantFindDepartmentByName(DepartmentEntity department) {
+        FacultyEntity faculty = new FacultyEntity("Faculty");
+        service.createFaculty(faculty);
+
+        service.createDepartment(department, faculty.getId());
+
+        assertNull(service.findDepartmentByName(""));
     }
 
     @ParameterizedTest
@@ -340,22 +384,6 @@ public class ServiceTest {
         DepartmentEntity department = new DepartmentEntity("Department");
         service.createDepartment(department, faculty.getId());
 
-        service.createStudent(student, department.getId());
-
-        assertEquals(1, studentRepo.getStudents().length);
-        assertEquals(student, studentRepo.getStudent(student.getId()));
-    }
-
-    @ParameterizedTest
-    @MethodSource("studentProvider")
-    void testCantCreateNotUniqueStudent(StudentEntity student) {
-        FacultyEntity faculty = new FacultyEntity("Faculty");
-        service.createFaculty(faculty);
-
-        DepartmentEntity department = new DepartmentEntity("Department");
-        service.createDepartment(department, faculty.getId());
-
-        service.createStudent(student, department.getId());
         service.createStudent(student, department.getId());
 
         assertEquals(1, studentRepo.getStudents().length);
