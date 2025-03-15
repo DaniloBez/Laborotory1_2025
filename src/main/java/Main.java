@@ -72,10 +72,28 @@ public class Main {
                     else
                         teacherCRUD();
                 }
+                case 9 -> OutputGetStudentsByFullNameForCourseInDepartment();
                 case 10 -> OutputSortStudentsByFullNameForCourseInDepartment();
             }
         } while (DataInput.getBoolean());
     }
+
+    /**
+     * Виводить список студентів, які навчаються на вказаному курсі в заданій кафедрі.
+     * Список не сортується, відображається у довільному порядку.
+     */
+    private static void OutputGetStudentsByFullNameForCourseInDepartment() {
+        out.print("Введіть кафедру: ");
+        String departmentName = DataInput.getString();
+        out.print("Введіть курс для студентів: ");
+        int course = DataInput.getInt(1, 6);
+        printArray(service.getStudentsByCourseInDepartment(service.findDepartmentByName(departmentName).getId(), course));
+    }
+
+    /**
+     * Виводить список студентів, які навчаються на вказаному курсі в заданій кафедрі,
+     * відсортований за ПІБ (прізвище, ім'я, по батькові).
+     */
     private static void OutputSortStudentsByFullNameForCourseInDepartment() {
         out.print("Введіть кафедру: ");
         String departmentName = DataInput.getString();
