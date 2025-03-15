@@ -72,10 +72,39 @@ public class Main {
                     else
                         teacherCRUD();
                 }
+                case 8 -> {
+                    out.println("""
+                            Виберіть дію:
+                            1) Вивести всіх студентів кафедри впорядкованих за алфавітом
+                            2) Вивести всіх викладачів кафедри впорядкованих за алфавітом
+                            """);
+                    if (DataInput.getInt(1, 2) == 1)
+                        OutputSortStudentsByFullNameInDepartment();
+                    else
+                        OutputSortTeachersByFullNameInDepartment();
+                }
                 case 9 -> OutputGetStudentsByFullNameForCourseInDepartment();
                 case 10 -> OutputSortStudentsByFullNameForCourseInDepartment();
             }
         } while (DataInput.getBoolean());
+    }
+
+    /**
+     * Виводить список викладачів заданої кафедри, відсортований за ПІБ (прізвище, ім'я, по батькові).
+     */
+    private static void OutputSortTeachersByFullNameInDepartment() {
+        out.print("Введіть кафедру: ");
+        String departmentName = DataInput.getString();
+        printArray(service.sortTeachersByFullNameInDepartment(service.findDepartmentByName(departmentName).getId()));
+    }
+
+    /**
+     * Виводить список студентів заданої кафедри, відсортований за ПІБ (прізвище, ім'я, по батькові).
+     */
+    private static void OutputSortStudentsByFullNameInDepartment() {
+        out.print("Введіть кафедру: ");
+        String departmentName = DataInput.getString();
+        printArray(service.sortStudentsByFullNameInDepartment(service.findDepartmentByName(departmentName).getId()));
     }
 
     /**
