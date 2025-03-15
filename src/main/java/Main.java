@@ -30,33 +30,100 @@ import Entity.Person.TeacherEntity;
 import Service.*;
 import Repository.*;
 import Entity.*;
+import Utils.DataInput;
 
 import static java.lang.System.out;
 
 public class Main {
+    private static Service service;
     public static void main(String[] args) {
-        Service service = init();
+        init();
 
-        out.println(printArray(service.getFaculties()));
-        out.println(printArray(service.getDepartments()));
-        out.println(printArray(service.getTeachers()));
-        out.println(printArray(service.getPersons()));
+        out.println("Вас вітає програма для роботи з університетом!");
+
+        do {
+            out.println("""
+                    Виберіть номер взаємодії:
+                    1) Створити/видалити/редагувати факультет
+                    2) Створити/видалити/редагувати кафедру факультета.
+                    3) Додати/видалити/редагувати студента/викладача до кафедри.
+                    4) Знайти студента/викладача за ПІБ. Або студента за курсом або групою.
+                    5) Вивести всіх студентів впорядкованих за курсами.
+                    6) Вивести всіх студентів/викладачів факультета впорядкованих за алфавітом.
+                    7) Вивести всіх студентів кафедри впорядкованих за курсами.
+                    8) Вивести всіх студентів/викладачів кафедри впорядкованих за алфавітом.
+                    9) Вивести всіх студентів кафедри вказаного курсу.
+                    10)Вивести всіх студентів кафедри вказаного курсу впорядкованих за алфавітом.
+                    """);
+
+            switch (DataInput.getInt(1, 10)){
+                case 1:
+                    facultyCRUD();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    break;
+                case 9:
+                    break;
+                case 10:
+                    break;
+            }
+
+            out.println("Продовжити?");
+        } while (DataInput.getBoolean());
     }
 
-    private static Service init(){
+    private static void facultyCRUD(){
+        out.println("""
+                Виберіть дію:
+                1) Створити факультет
+                2) Оновити факультет
+                3) Видалити факультет
+                """);
+        switch (DataInput.getInt(1, 3)){
+            case 1:
+                createFaculty();
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+        }
+    }
+
+    private static void createFaculty(){
+        service.createFaculty(new FacultyEntity(DataInput.getString()));
+    }
+
+    private static void updateFaculty(){
+        out.println("Виберіть факультет у якого хочете оновити інформацію: ");
+        out.println(printArray(service.getFaculties()));
+        //TODO
+    }
+
+    private static void init(){
         StudentRepository studentRepo = new StudentRepository();
         TeacherRepository teacherRepo = new TeacherRepository();
         DepartmentRepository departmentRepo = new DepartmentRepository();
         FacultyRepository facultyRepo = new FacultyRepository();
 
-        Service service = new Service(studentRepo, teacherRepo, departmentRepo, facultyRepo);
+        service = new Service(studentRepo, teacherRepo, departmentRepo, facultyRepo);
 
-        fillDB(service);
-
-        return service;
+        fillDB();
     }
 
-    private static void fillDB(Service service){
+    private static void fillDB(){
         //region Faculty
         FacultyEntity FGN = new FacultyEntity("ФГН");
         String FGNId = FGN.getId();
