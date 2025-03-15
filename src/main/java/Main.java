@@ -79,11 +79,20 @@ public class Main {
                 case 9:
                     break;
                 case 10:
+                    OutputSortStudentsByFullNameForCourseInDepartment();
                     break;
             }
 
             out.println("Продовжити?");
         } while (DataInput.getBoolean());
+    }
+
+    private static void OutputSortStudentsByFullNameForCourseInDepartment() {
+        out.print("Введіть кафедру: ");
+        String departmentName = DataInput.getString();
+        out.print("Введіть курс для студентів: ");
+        int course = DataInput.getInt(1, 6);
+        printArray(service.sortStudentsByFullNameForCourseInDepartment(service.findDepartmentByName(departmentName).getId(), course));
     }
 
     private static void facultyCRUD(){
