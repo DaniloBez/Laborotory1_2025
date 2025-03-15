@@ -72,6 +72,17 @@ public class Main {
                     else
                         teacherCRUD();
                 }
+                case 6 -> {
+                    out.println("""
+                            Виберіть дію:
+                            1) Вивести всіх студентів факультета впорядкованих за алфавітом
+                            2) Вивести всіх студентів викладачів впорядкованих за алфавітом
+                            """);
+                    if (DataInput.getInt(1, 2) == 1)
+                        OutputSortStudentsByFullNameInFaculty();
+                    else
+                        OutputSortTeachersByFullNameInFaculty();
+                }
                 case 7 -> OutputSortStudentsByCourseInDepartment();
                 case 8 -> {
                     out.println("""
@@ -88,6 +99,24 @@ public class Main {
                 case 10 -> OutputSortStudentsByFullNameForCourseInDepartment();
             }
         } while (DataInput.getBoolean());
+    }
+
+    /**
+     * Виводить список викладачів факультету, відсортований за повним ім'ям.
+     */
+    private static void OutputSortTeachersByFullNameInFaculty() {
+        out.print("Введіть факультет: ");
+        String facultyName = DataInput.getString();
+        printArray(service.sortTeachersByFullNameInFaculty(service.findFacultyByName(facultyName).getId()));
+    }
+
+    /**
+     * Виводить список студентів факультету, відсортований за повним ім'ям.
+     */
+    private static void OutputSortStudentsByFullNameInFaculty() {
+        out.print("Введіть факультет: ");
+        String facultyName = DataInput.getString();
+        printArray(service.sortStudentsByFullNameInFaculty(service.findFacultyByName(facultyName).getId()));
     }
 
     /**
