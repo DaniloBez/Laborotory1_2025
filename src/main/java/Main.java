@@ -72,6 +72,7 @@ public class Main {
                     else
                         teacherCRUD();
                 }
+                case 7 -> OutputSortStudentsByCourseInDepartment();
                 case 8 -> {
                     out.println("""
                             Виберіть дію:
@@ -87,6 +88,15 @@ public class Main {
                 case 10 -> OutputSortStudentsByFullNameForCourseInDepartment();
             }
         } while (DataInput.getBoolean());
+    }
+
+    /**
+     * Виводить список студентів заданої кафедри, відсортований за курсом.
+     */
+    private static void OutputSortStudentsByCourseInDepartment() {
+        out.print("Введіть кафедру: ");
+        String departmentName = DataInput.getString();
+        printArray(service.sortStudentsByCourseInDepartment(service.findDepartmentByName(departmentName).getId()));
     }
 
     /**
