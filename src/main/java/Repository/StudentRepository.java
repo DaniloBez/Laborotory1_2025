@@ -43,8 +43,10 @@ public class StudentRepository {
     public void updateStudent(String id, StudentEntity newStudentData) {
         StudentEntity person = getStudent(id);
 
-        if (person != null)
+        if (person != null) {
             person.update(newStudentData);
+            out.println("Студента успішно оновлено!");
+        }
         else
             out.println("Студента не знайдено!");
     }
@@ -68,6 +70,7 @@ public class StudentRepository {
             }
 
             students = newStudents;
+            out.println("Студента успішно видалено!");
         }
         else
             out.print("Студента не знайдено!");

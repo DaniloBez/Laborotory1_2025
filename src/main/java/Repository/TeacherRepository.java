@@ -43,8 +43,10 @@ public class TeacherRepository {
     public void updateTeacher(String id, TeacherEntity newTeacherData) {
         TeacherEntity teacher = getTeacher(id);
 
-        if (teacher != null)
+        if (teacher != null) {
             teacher.update(newTeacherData);
+            out.println("Вчителя успішно оновлено!");
+        }
         else
             out.println("Вчителя не знайдено!");
     }
@@ -68,6 +70,7 @@ public class TeacherRepository {
             }
 
             teachers = newTeachers;
+            out.println("Вчителя успішно видалено!");
         }
         else
             out.print("Вчителя не знайдено!");

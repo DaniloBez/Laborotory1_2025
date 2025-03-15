@@ -52,6 +52,7 @@ public class Service {
         }
 
         facultyRepository.createFaculty(faculty);
+        out.println("Факультет успішно створено!");
     }
 
     /**
@@ -90,6 +91,7 @@ public class Service {
             }
 
             facultyRepository.deleteFaculty(idFaculty);
+            out.println("Факультет успішно видалено!");
         }
         else
             out.println("Факультет не знайдено!");
@@ -151,6 +153,8 @@ public class Service {
 
             departmentRepository.createDepartment(department);
             facultyRepository.addDepartmentToFaculty(idFaculty, department.getId());
+
+            out.println("Кафедру успішно створено!");
         }
         else
             out.println("Факультет не знайдено!");
@@ -185,6 +189,8 @@ public class Service {
 
             departmentRepository.deleteDepartment(idDepartment);
             facultyRepository.removeDepartmentFromFaculty(findFacultyLinkedToDepartment(idDepartment), idDepartment);
+
+            out.println("Кафедру успішно видалено!");
         }
         else
             out.println("Кафедру не знайдено!");
@@ -256,6 +262,8 @@ public class Service {
         if(departmentRepository.getDepartment(idDepartment) != null){
             teacherRepository.createTeacher(teacher);
             departmentRepository.addTeacherToDepartment(idDepartment, teacher.getId());
+
+            out.println("Вчителя успішно створено!");
         }
         else
             out.println("Кафедру не знайдено!");
@@ -409,6 +417,7 @@ public class Service {
 
             studentRepository.createStudent(student);
             departmentRepository.addStudentToDepartment(idDepartment, student.getId());
+            out.println("Студента успішно створено!");
         }
         else
             out.println("Кафедру не знайдено!");
