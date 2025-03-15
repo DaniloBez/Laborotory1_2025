@@ -47,4 +47,9 @@ public class FacultyEntity {
         this.name = facultyEntity.getName();
         this.departmentIds = facultyEntity.getDepartmentIds();
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

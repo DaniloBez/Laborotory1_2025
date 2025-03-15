@@ -63,6 +63,6 @@ public class TeacherEntity {
      */
     @Override
     public String toString() {
-        return "Прізвище: " + surname + ", Ім'я : " + name + ", По батькові: " + middleName;
+        return surname + " " + name + " " + middleName;
     }
 }
