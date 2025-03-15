@@ -45,8 +45,10 @@ public class DepartmentRepository {
     public void updateDepartment(String id, DepartmentEntity newDepartmentData) {
         DepartmentEntity department = getDepartment(id);
 
-        if (department != null)
+        if (department != null) {
             department.update(newDepartmentData);
+            out.println("Кафедру успішно створено!");
+        }
         else
             out.println("Кафедру не знайдено!");
     }

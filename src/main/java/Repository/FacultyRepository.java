@@ -44,8 +44,10 @@ public class FacultyRepository {
     public void updateFaculty(String id, FacultyEntity newFacultyData) {
         FacultyEntity faculty = getFaculty(id);
 
-        if (faculty != null)
+        if (faculty != null) {
             faculty.update(newFacultyData);
+            out.println("Факультет успішно оновлено!");
+        }
         else
             out.println("Факультет не знайдено!");
     }
