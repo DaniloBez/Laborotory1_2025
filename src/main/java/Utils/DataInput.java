@@ -158,7 +158,7 @@ public final class DataInput {
                     // Робимо першу букву великою
                     return Character.toUpperCase(input.charAt(0)) + input.substring(1);
                 } else {
-                    System.out.println("Ім'я та прізвище можуть містити тільки кириличні літери, апостроф та дефіс! Спробуйте ще раз.");
+                    System.out.println("Це поле має містити тільки кириличні літери, апостроф та дефіс! Спробуйте ще раз.");
                 }
             } catch (IOException e) {
                 System.out.println("Сталася помилка при введенні.");

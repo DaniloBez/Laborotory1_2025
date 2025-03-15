@@ -79,11 +79,11 @@ public class Main {
                             2) Знайти викладача за ПІБ
                             """);
                     if (DataInput.getInt(1, 2) == 1)
-                        OutputFindTeacherByFullName();
+                        outputFindStudentByFullNameOrCourseOrGroup();
                     else
-                        OutputFindStudentByFullNameOrCourseOrGroup();
+                        outputFindTeacherByFullName();
                 }
-                case 5 -> OutputSortStudentsByCourse();
+                case 5 -> outputSortStudentsByCourse();
                 case 6 -> {
                     out.println("""
                             Виберіть дію:
@@ -91,11 +91,11 @@ public class Main {
                             2) Вивести всіх викладачів факультета впорядкованих за алфавітом
                             """);
                     if (DataInput.getInt(1, 2) == 1)
-                        OutputSortStudentsByFullNameInFaculty();
+                        outputSortStudentsByFullNameInFaculty();
                     else
-                        OutputSortTeachersByFullNameInFaculty();
+                        outputSortTeachersByFullNameInFaculty();
                 }
-                case 7 -> OutputSortStudentsByCourseInDepartment();
+                case 7 -> outputSortStudentsByCourseInDepartment();
                 case 8 -> {
                     out.println("""
                             Виберіть дію:
@@ -103,13 +103,14 @@ public class Main {
                             2) Вивести всіх викладачів кафедри впорядкованих за алфавітом
                             """);
                     if (DataInput.getInt(1, 2) == 1)
-                        OutputSortStudentsByFullNameInDepartment();
+                        outputSortStudentsByFullNameInDepartment();
                     else
-                        OutputSortTeachersByFullNameInDepartment();
+                        outputSortTeachersByFullNameInDepartment();
                 }
-                case 9 -> OutputGetStudentsByFullNameForCourseInDepartment();
-                case 10 -> OutputSortStudentsByFullNameForCourseInDepartment();
+                case 9 -> outputGetStudentsByFullNameForCourseInDepartment();
+                case 10 -> outputSortStudentsByFullNameForCourseInDepartment();
             }
+            out.println("Продовжити?");
         } while (DataInput.getBoolean());
     }
 
@@ -117,27 +118,28 @@ public class Main {
      * Виводить меню для пошуку студента за ПІБ, курсом або групою.
      * Залежно від вибору користувача викликає відповідний метод пошуку.
      */
-    private static void OutputFindStudentByFullNameOrCourseOrGroup() {
+    private static void outputFindStudentByFullNameOrCourseOrGroup() {
         out.println("""
                 Виберіть дію:
                 1) Знайти студента за ПІБ
                 2) Знайти студента за курсом
                 3) Знайти студента за групою
                 """);
-        if (DataInput.getInt(1, 3) == 1)
-            OutputFindStudentByFullName();
-        else if (DataInput.getInt(1, 3) == 2)
-            OutputFindStudentByCourse();
+        int choice = DataInput.getInt(1, 3);
+        if (choice == 1)
+            outputFindStudentByFullName();
+        else if (choice == 2)
+            outputFindStudentByCourse();
         else
-            OutputFindStudentByGroup();
+            outputFindStudentByGroup();
     }
 
     /**
      * Шукає і виводить студента за вказаною групою.
      * Якщо студента не знайдено — повідомляє про це.
      */
-    private static void OutputFindStudentByGroup() {
-        out.print("Введіть групу: ");
+    private static void outputFindStudentByGroup() {
+        out.println("Введіть групу: ");
         StudentEntity student =  service.findStudentByGroup(DataInput.getInt(1, 15));
 
         if(student != null)
@@ -150,7 +152,7 @@ public class Main {
      * Шукає і виводить студента за вказаним курсом.
      * Якщо студента не знайдено — повідомляє про це.
      */
-    private static void OutputFindStudentByCourse() {
+    private static void outputFindStudentByCourse() {
         out.print("Введіть курс: ");
         StudentEntity student =  service.findStudentByCourse(DataInput.getInt(1, 6));
 
@@ -164,7 +166,7 @@ public class Main {
      * Шукає і виводить студента за повним ім'ям (ПІБ).
      * Якщо студента не знайдено — повідомляє про це.
      */
-    private static void OutputFindStudentByFullName() {
+    private static void outputFindStudentByFullName() {
         TeacherEntity studentFullName = getTeacherEntityFromConsole();
         StudentEntity student =  service.findStudentByFullName(studentFullName.getName(),studentFullName.getSurname(),studentFullName.getMiddleName());
 
@@ -178,7 +180,7 @@ public class Main {
      * Шукає і виводить викладача за повним ім'ям (ПІБ).
      * Якщо викладача не знайдено — повідомляє про це.
      */
-    private static void OutputFindTeacherByFullName() {
+    private static void outputFindTeacherByFullName() {
         TeacherEntity studentFullName = getTeacherEntityFromConsole();
         TeacherEntity teacher =  service.findTeacherByFullName(studentFullName.getName(),studentFullName.getSurname(),studentFullName.getMiddleName());
 
@@ -191,15 +193,16 @@ public class Main {
     /**
      * Виводить список усіх студентів, відсортований за курсом.
      */
-    private static void OutputSortStudentsByCourse() {
+    private static void outputSortStudentsByCourse() {
         out.println(printArray(service.sortStudentsByCourse()));
     }
 
     /**
      * Виводить список викладачів факультету, відсортований за повним ім'ям.
      */
-    private static void OutputSortTeachersByFullNameInFaculty() {
-        out.print("Введіть факультет: ");
+    private static void outputSortTeachersByFullNameInFaculty() {
+        out.println(printArray(service.getFaculties()));
+        out.println("Введіть факультет: ");
         String facultyName = DataInput.getString();
         out.println(printArray(service.sortTeachersByFullNameInFaculty(service.findFacultyByName(facultyName).getId())));
     }
@@ -207,8 +210,9 @@ public class Main {
     /**
      * Виводить список студентів факультету, відсортований за повним ім'ям.
      */
-    private static void OutputSortStudentsByFullNameInFaculty() {
-        out.print("Введіть факультет: ");
+    private static void outputSortStudentsByFullNameInFaculty() {
+        out.println(printArray(service.getFaculties()));
+        out.println("Введіть факультет: ");
         String facultyName = DataInput.getString();
         out.println(printArray(service.sortStudentsByFullNameInFaculty(service.findFacultyByName(facultyName).getId())));
     }
@@ -216,8 +220,9 @@ public class Main {
     /**
      * Виводить список студентів заданої кафедри, відсортований за курсом.
      */
-    private static void OutputSortStudentsByCourseInDepartment() {
-        out.print("Введіть кафедру: ");
+    private static void outputSortStudentsByCourseInDepartment() {
+        out.println(printArray(service.getDepartments()));
+        out.println("Введіть кафедру: ");
         String departmentName = DataInput.getString();
         out.println(printArray(service.sortStudentsByCourseInDepartment(service.findDepartmentByName(departmentName).getId())));
     }
@@ -225,8 +230,9 @@ public class Main {
     /**
      * Виводить список викладачів заданої кафедри, відсортований за ПІБ (прізвище, ім'я, по батькові).
      */
-    private static void OutputSortTeachersByFullNameInDepartment() {
-        out.print("Введіть кафедру: ");
+    private static void outputSortTeachersByFullNameInDepartment() {
+        out.println(printArray(service.getDepartments()));
+        out.println("Введіть кафедру: ");
         String departmentName = DataInput.getString();
         out.println(printArray(service.sortTeachersByFullNameInDepartment(service.findDepartmentByName(departmentName).getId())));
     }
@@ -234,8 +240,9 @@ public class Main {
     /**
      * Виводить список студентів заданої кафедри, відсортований за ПІБ (прізвище, ім'я, по батькові).
      */
-    private static void OutputSortStudentsByFullNameInDepartment() {
-        out.print("Введіть кафедру: ");
+    private static void outputSortStudentsByFullNameInDepartment() {
+        out.println(printArray(service.getDepartments()));
+        out.println("Введіть кафедру: ");
         String departmentName = DataInput.getString();
         out.println(printArray(service.sortStudentsByFullNameInDepartment(service.findDepartmentByName(departmentName).getId())));
     }
@@ -244,10 +251,11 @@ public class Main {
      * Виводить список студентів, які навчаються на вказаному курсі в заданій кафедрі.
      * Список не сортується, відображається у довільному порядку.
      */
-    private static void OutputGetStudentsByFullNameForCourseInDepartment() {
-        out.print("Введіть кафедру: ");
+    private static void outputGetStudentsByFullNameForCourseInDepartment() {
+        out.println(printArray(service.getDepartments()));
+        out.println("Введіть кафедру: ");
         String departmentName = DataInput.getString();
-        out.print("Введіть курс для студентів: ");
+        out.println("Введіть курс для студентів: ");
         int course = DataInput.getInt(1, 6);
         out.println(printArray(service.getStudentsByCourseInDepartment(service.findDepartmentByName(departmentName).getId(), course)));
     }
@@ -256,10 +264,11 @@ public class Main {
      * Виводить список студентів, які навчаються на вказаному курсі в заданій кафедрі,
      * відсортований за ПІБ (прізвище, ім'я, по батькові).
      */
-    private static void OutputSortStudentsByFullNameForCourseInDepartment() {
-        out.print("Введіть кафедру: ");
+    private static void outputSortStudentsByFullNameForCourseInDepartment() {
+        out.println(printArray(service.getDepartments()));
+        out.println("Введіть кафедру: ");
         String departmentName = DataInput.getString();
-        out.print("Введіть курс для студентів: ");
+        out.println("Введіть курс для студентів: ");
         int course = DataInput.getInt(1, 6);
         out.println(printArray(service.sortStudentsByFullNameForCourseInDepartment(service.findDepartmentByName(departmentName).getId(), course)));
     }
@@ -643,6 +652,7 @@ public class Main {
         service.createStudent(new StudentEntity("Кіра", "Дудник", "Олегівна", 2, 8), historyId);
         service.createStudent(new StudentEntity("Борис", "Москаленко", "Володимирович", 3, 9), archaeologyId);
         service.createStudent(new StudentEntity("Юліан", "Фролов", "Артемович", 4, 4), philosophyAndReligiousStudiesId);
+        service.createStudent(new StudentEntity("Олексій", "Арестович", "Миколайович", 4, 6), philosophyAndReligiousStudiesId);
         service.createStudent(new StudentEntity("Марта", "Підопригора", "Юріївна", 5, 1), GeneralAndSlavicLinguisticsId);
         //endregion
 
