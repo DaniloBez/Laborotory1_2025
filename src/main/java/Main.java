@@ -63,6 +63,7 @@ public class Main {
                     facultyCRUD();
                     break;
                 case 2:
+                    departmentCRUD();
                     break;
                 case 3:
                     break;
@@ -127,6 +128,50 @@ public class Main {
         out.println("Виберіть факультет який хочете видалити: ");
         out.println(printArray(service.getFaculties()));
         service.deleteFaculty(service.findFacultyByName(DataInput.inputName()).getId());
+    }
+
+    private static void departmentCRUD(){
+        out.println("""
+                Виберіть дію:
+                1) Створити кафедру
+                2) Оновити кафедру
+                3) Видалити кафедру
+                """);
+        switch (DataInput.getInt(1, 3)){
+            case 1:
+                createDepartment();
+                break;
+            case 2:
+                updateDepartment();
+                break;
+            case 3:
+                deleteDepartment();
+                break;
+        }
+    }
+
+    private static void createDepartment(){
+        out.println("Виберіть факультет у якого хочете створити кафедру: ");
+        out.println(printArray(service.getFaculties()));
+        String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+
+        out.println("Введіть назву кафедри: ");
+        service.createDepartment(new DepartmentEntity(DataInput.inputName()), facultyID);
+    }
+
+    private static void updateDepartment(){
+        out.println("Виберіть кафедру у якій хочете оновити інформацію: ");
+        out.println(printArray(service.getDepartments()));
+        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
+
+        out.println("Введіть нову інформацію (назву): ");
+        service.updateDepartment(departmentID, new DepartmentEntity(DataInput.inputName()));
+    }
+
+    private static void deleteDepartment(){
+        out.println("Виберіть кафедру яку хочете видалити: ");
+        out.println(printArray(service.getDepartments()));
+        service.deleteDepartment(service.findDepartmentByName(DataInput.inputName()).getId());
     }
 
     private static void init(){
