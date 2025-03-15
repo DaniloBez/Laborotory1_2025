@@ -3,14 +3,30 @@ package Utils;
 import Entity.Person.StudentEntity;
 import Entity.Person.TeacherEntity;
 
+/**
+ * Утилітний клас для сортування об'єктів StudentEntity та TeacherEntity
+ * за курсом або за повним ім'ям (ПІБ) із підтримкою українського алфавіту.
+ */
 public class SortUtils {
 
     private static final String UKRAINIAN_ALPHABET = "АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя";
 
+    /**
+     * Перерахування типів сортування.
+     */
     public enum SortType {
         BY_COURSE, BY_FULL_NAME
     }
 
+    /**
+     * Сортує масив об'єктів за допомогою алгоритму швидкого сортування (QuickSort).
+     *
+     * @param array масив об'єктів для сортування
+     * @param low   початковий індекс підмасиву
+     * @param high  кінцевий індекс підмасиву
+     * @param sortType тип сортування (за курсом або за ПІБ)
+     * @param asc   true — за зростанням, false — за спаданням
+     */
     public static void quickSort(Object[] array, int low, int high, SortType sortType, boolean asc) {
         if (low < high) {
             int pi = partition(array, low, high, sortType, asc);
@@ -18,7 +34,11 @@ public class SortUtils {
             quickSort(array, pi + 1, high, sortType, asc);
         }
     }
+    // -------------------- Приватні допоміжні методи -------------------- //
 
+    /**
+     * Допоміжний метод для розбиття масиву під час QuickSort.
+     */
     private static int partition(Object[] array, int low, int high, SortType sortType, boolean asc) {
         Object pivot = array[high];
         int i = low - 1;
@@ -37,13 +57,18 @@ public class SortUtils {
         return i + 1;
     }
 
+    /**
+     * Обмінює місцями два елементи в масиві.
+     */
     private static void swap(Object[] array, int i, int j) {
         Object temp = array[i];
         array[i] = array[j];
         array[j] = temp;
     }
 
-    // ----------- Метод порівняння об'єктів залежно від типу сортування ----------- //
+    /**
+     * Порівнює два об'єкти StudentEntity або TeacherEntity відповідно до типу сортування.
+     */
     private static int compareObjects(Object o1, Object o2, SortType sortType) {
         if (o1 instanceof StudentEntity s1 && o2 instanceof StudentEntity s2) {
 
@@ -71,7 +96,9 @@ public class SortUtils {
         throw new IllegalArgumentException("Unsupported object types or sort type.");
     }
 
-    // ----------- Метод порівняння студентів (ПІБ) ----------- //
+    /**
+     * Порівнює двох студентів за прізвищем, ім'ям та по-батькові.
+     */
     private static int compareStudents(StudentEntity s1, StudentEntity s2) {
         int cmp = compareNames(s1.getSurname(), s2.getSurname());
         if (cmp != 0) return cmp;
@@ -80,7 +107,9 @@ public class SortUtils {
         return compareNames(s1.getMiddleName(), s2.getMiddleName());
     }
 
-    // ----------- Метод порівняння викладачів (ПІБ) ----------- //
+    /**
+     * Порівнює двох викладачів за прізвищем, ім'ям та по-батькові.
+     */
     private static int compareTeachers(TeacherEntity t1, TeacherEntity t2) {
         int cmp = compareNames(t1.getSurname(), t2.getSurname());
         if (cmp != 0) return cmp;
@@ -89,6 +118,9 @@ public class SortUtils {
         return compareNames(t1.getMiddleName(), t2.getMiddleName());
     }
 
+    /**
+     * Порівнює два рядки (імена) за українським алфавітом.
+     */
     private static int compareNames(String name1, String name2) {
         int n1 = name1.length();
         int n2 = name2.length();
