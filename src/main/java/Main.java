@@ -31,8 +31,6 @@ import Service.*;
 import Repository.*;
 import Entity.*;
 import Utils.DataInput;
-import Entity.Person.StudentEntity;
-import Utils.*;
 
 import static java.lang.System.out;
 
@@ -66,6 +64,15 @@ public class Main {
                     departmentCRUD();
                     break;
                 case 3:
+                    out.println("""
+                            Виберіть дію:
+                            1) Додати/видалити/редагувати студента до кафедри.
+                            2) Додати/видалити/редагувати викладача до кафедри
+                            """);
+                    if(DataInput.getInt(1, 2) == 1)
+                        studentCRUD();
+                    else
+                        teacherCRUD();
                     break;
                 case 4:
                     break;
@@ -172,6 +179,140 @@ public class Main {
         out.println("Виберіть кафедру яку хочете видалити: ");
         out.println(printArray(service.getDepartments()));
         service.deleteDepartment(service.findDepartmentByName(DataInput.inputName()).getId());
+    }
+
+    private static void studentCRUD(){
+        out.println("""
+                Виберіть дію:
+                1) Створити студента
+                2) Оновити студента
+                3) Видалити студента
+                """);
+        switch (DataInput.getInt(1, 3)){
+            case 1:
+                createStudent();
+                break;
+            case 2:
+                updateStudent();
+                break;
+            case 3:
+                deleteStudent();
+                break;
+        }
+    }
+
+    private static void createStudent(){
+        out.println("Виберіть кафедру у якого хочете створити студента: ");
+        out.println(printArray(service.getDepartments()));
+        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
+
+        out.println("Заповніть дані");
+        service.createStudent(getStudentEntityFromConsole(), departmentID);
+    }
+
+    private static void updateStudent(){
+        out.println("Виберіть студента у якого хочете оновити інформацію: ");
+        out.println(printArray(service.getStudents()));
+
+        TeacherEntity studentFullName = getTeacherEntityFromConsole();
+
+        String studentID = service.findStudentByFullName(studentFullName.getName(), studentFullName.getSurname(), studentFullName.getMiddleName()).getId();
+
+        out.println("Введіть нову інформацію: ");
+        service.updateStudent(studentID, getStudentEntityFromConsole());
+    }
+
+    private static void deleteStudent(){
+        out.println("Виберіть студента якого хочете видалити: ");
+        out.println(printArray(service.getStudents()));
+
+        TeacherEntity studentFullName = getTeacherEntityFromConsole();
+
+        service.deleteStudent(service.findStudentByFullName(studentFullName.getName(),
+                studentFullName.getSurname(), studentFullName.getMiddleName()).getId());
+    }
+
+    private static void teacherCRUD(){
+        out.println("""
+                Виберіть дію:
+                1) Створити вчителя
+                2) Оновити вчителя
+                3) Видалити вчителя
+                """);
+        switch (DataInput.getInt(1, 3)){
+            case 1:
+                createTeacher();
+                break;
+            case 2:
+                updateTeacher();
+                break;
+            case 3:
+                deleteTeacher();
+                break;
+        }
+    }
+
+    private static void createTeacher(){
+        out.println("Виберіть кафедру у якого хочете створити вчителя: ");
+        out.println(printArray(service.getDepartments()));
+        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
+
+        out.println("Заповніть дані");
+        service.createTeacher(getTeacherEntityFromConsole(), departmentID);
+    }
+
+    private static void updateTeacher(){
+        out.println("Виберіть вчителя у якого хочете оновити інформацію: ");
+        out.println(printArray(service.getTeachers()));
+
+        TeacherEntity teacherFullName = getTeacherEntityFromConsole();
+
+        String teacherID = service.findTeacherByFullName(teacherFullName.getName(), teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId();
+
+        out.println("Введіть нову інформацію: ");
+        service.updateTeacher(teacherID, getTeacherEntityFromConsole());
+    }
+
+    private static void deleteTeacher(){
+        out.println("Виберіть вчителя якого хочете видалити: ");
+        out.println(printArray(service.getTeachers()));
+
+        TeacherEntity teacherFullName = getTeacherEntityFromConsole();
+
+        service.deleteTeacher(service.findStudentByFullName(teacherFullName.getName(),
+                teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId());
+    }
+
+    private static StudentEntity getStudentEntityFromConsole(){
+        out.println("Введіть ім'я: ");
+        String name = DataInput.inputName();
+
+        out.println("Введіть прізвище: ");
+        String surname = DataInput.inputName();
+
+        out.println("Введіть по батькові: ");
+        String middleName = DataInput.inputName();
+
+        out.println("Введіть курс: ");
+        int course = DataInput.getInt(1, 6);
+
+        out.println("Введіть групу: ");
+        int group = DataInput.getInt(1, 15);
+
+        return new StudentEntity(name, surname, middleName, course, group);
+    }
+
+    private static TeacherEntity getTeacherEntityFromConsole(){
+        out.println("Введіть ім'я: ");
+        String name = DataInput.inputName();
+
+        out.println("Введіть прізвище: ");
+        String surname = DataInput.inputName();
+
+        out.println("Введіть по батькові: ");
+        String middleName = DataInput.inputName();
+
+        return new TeacherEntity(name, surname, middleName);
     }
 
     private static void init(){
