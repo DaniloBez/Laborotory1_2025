@@ -72,6 +72,7 @@ public class Main {
                     else
                         teacherCRUD();
                 }
+                case 5 -> OutputSortStudentsByCourse();
                 case 6 -> {
                     out.println("""
                             Виберіть дію:
@@ -99,6 +100,13 @@ public class Main {
                 case 10 -> OutputSortStudentsByFullNameForCourseInDepartment();
             }
         } while (DataInput.getBoolean());
+    }
+    
+    /**
+     * Виводить список усіх студентів, відсортований за курсом.
+     */
+    private static void OutputSortStudentsByCourse() {
+        printArray(service.sortStudentsByCourse());
     }
 
     /**
