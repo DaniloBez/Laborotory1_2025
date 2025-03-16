@@ -303,10 +303,14 @@ public class Main {
     private static void updateFaculty() {
         out.println("Виберіть факультет у якого хочете оновити інформацію: ");
         out.println(printArray(service.getFaculties()));
-        String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+        if(service.findFacultyByName(DataInput.inputName()) != null){
+            String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+            out.println("Введіть нову інформацію (назву): ");
+            service.updateFaculty(facultyID, new FacultyEntity(DataInput.inputName()));
+        }
+        else
+            out.println("факультет з таким ім'ям не знайдено!");
 
-        out.println("Введіть нову інформацію (назву): ");
-        service.updateFaculty(facultyID, new FacultyEntity(DataInput.inputName()));
     }
 
     /**
@@ -315,7 +319,11 @@ public class Main {
     private static void deleteFaculty() {
         out.println("Виберіть факультет який хочете видалити: ");
         out.println(printArray(service.getFaculties()));
-        service.deleteFaculty(service.findFacultyByName(DataInput.inputName()).getId());
+        if(service.findFacultyByName(DataInput.inputName()) != null){
+            service.deleteFaculty(service.findFacultyByName(DataInput.inputName()).getId());
+        }
+        else
+            out.println("факультет з таким ім'ям видалити неможливо!");
     }
 
     /**
@@ -553,7 +561,7 @@ public class Main {
         String FIId = FI.getId();
         service.createFaculty(FI);
 
-        FacultyEntity PRO = new FacultyEntity("КМА_ПРО");
+        FacultyEntity PRO = new FacultyEntity("КМА-ПРО");
         String PROId = PRO.getId();
         service.createFaculty(PRO);
         //endregion

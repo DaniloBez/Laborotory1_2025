@@ -152,18 +152,17 @@ public final class DataInput {
     public static String inputName() {
         while (true) {
             try {
-                String input = reader.readLine().trim();
-                // Дозволено тільки кирилицю, апостроф, дефіс та пробіли між словами
-                if (input.matches("[а-яА-ЯіІїЇєЄ'-]+(\\s[а-яА-ЯіІїЇєЄ'-]+)*")) {
+                String input = reader.readLine().trim().toLowerCase();
+                // Дозволено тільки кирилицю, апостроф, дефіс, нижнє підкреслення та пробіли між словами
+                if (input.matches("[а-яіїє'_\\-]+(\\s[а-яіїє'_\\-]+)*")) {
                     // Робимо першу букву великою
                     return Character.toUpperCase(input.charAt(0)) + input.substring(1);
                 } else {
-                    System.out.println("Це поле має містити тільки кириличні літери, апостроф та дефіс! Спробуйте ще раз.");
+                    System.out.println("Це поле має містити тільки кириличні літери, апостроф, дефіс, нижнє підкреслення та пробіли! Спробуйте ще раз.");
                 }
             } catch (IOException e) {
                 System.out.println("Сталася помилка при введенні.");
             }
         }
     }
-
 }
