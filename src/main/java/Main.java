@@ -203,8 +203,12 @@ public class Main {
     private static void outputSortTeachersByFullNameInFaculty() {
         out.println(printArray(service.getFaculties()));
         out.println("Введіть факультет: ");
-        String facultyName = DataInput.getString();
-        out.println(printArray(service.sortTeachersByFullNameInFaculty(service.findFacultyByName(facultyName).getId())));
+        FacultyEntity faculty = service.findFacultyByName(DataInput.inputFaculty());
+
+        if (faculty != null)
+            out.println(printArray(service.sortTeachersByFullNameInFaculty(faculty.getId())));
+        else
+            out.println("факультет не знайдено!");
     }
 
     /**
@@ -213,8 +217,12 @@ public class Main {
     private static void outputSortStudentsByFullNameInFaculty() {
         out.println(printArray(service.getFaculties()));
         out.println("Введіть факультет: ");
-        String facultyName = DataInput.getString();
-        out.println(printArray(service.sortStudentsByFullNameInFaculty(service.findFacultyByName(facultyName).getId())));
+        FacultyEntity faculty = service.findFacultyByName(DataInput.inputFaculty());
+
+        if (faculty != null)
+            out.println(printArray(service.sortStudentsByFullNameInFaculty(faculty.getId())));
+        else
+            out.println("факультет не знайдено!");
     }
 
     /**
@@ -223,8 +231,12 @@ public class Main {
     private static void outputSortStudentsByCourseInDepartment() {
         out.println(printArray(service.getDepartments()));
         out.println("Введіть кафедру: ");
-        String departmentName = DataInput.getString();
-        out.println(printArray(service.sortStudentsByCourseInDepartment(service.findDepartmentByName(departmentName).getId())));
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if (department != null)
+            out.println(printArray(service.sortStudentsByCourseInDepartment(department.getId())));
+        else
+            out.println("кафедра не знайдена!");
     }
 
     /**
@@ -233,8 +245,12 @@ public class Main {
     private static void outputSortTeachersByFullNameInDepartment() {
         out.println(printArray(service.getDepartments()));
         out.println("Введіть кафедру: ");
-        String departmentName = DataInput.getString();
-        out.println(printArray(service.sortTeachersByFullNameInDepartment(service.findDepartmentByName(departmentName).getId())));
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if (department != null)
+            out.println(printArray(service.sortTeachersByFullNameInDepartment(department.getId())));
+        else
+            out.println("кафедра не знайдена!");
     }
 
     /**
@@ -243,8 +259,12 @@ public class Main {
     private static void outputSortStudentsByFullNameInDepartment() {
         out.println(printArray(service.getDepartments()));
         out.println("Введіть кафедру: ");
-        String departmentName = DataInput.getString();
-        out.println(printArray(service.sortStudentsByFullNameInDepartment(service.findDepartmentByName(departmentName).getId())));
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if (department != null)
+            out.println(printArray(service.sortStudentsByFullNameInDepartment(department.getId())));
+        else
+            out.println("кафедра не знайдена!");
     }
 
     /**
@@ -254,10 +274,15 @@ public class Main {
     private static void outputGetStudentsByFullNameForCourseInDepartment() {
         out.println(printArray(service.getDepartments()));
         out.println("Введіть кафедру: ");
-        String departmentName = DataInput.getString();
-        out.println("Введіть курс для студентів: ");
-        int course = DataInput.getInt(1, 6);
-        out.println(printArray(service.getStudentsByCourseInDepartment(service.findDepartmentByName(departmentName).getId(), course)));
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if (department != null){
+            out.println("Введіть курс для студентів: ");
+            int course = DataInput.getInt(1, 6);
+            out.println(printArray(service.getStudentsByCourseInDepartment(department.getId(), course)));
+        }
+        else
+            out.println("кафедра не знайдена!");
     }
 
     /**
@@ -267,10 +292,15 @@ public class Main {
     private static void outputSortStudentsByFullNameForCourseInDepartment() {
         out.println(printArray(service.getDepartments()));
         out.println("Введіть кафедру: ");
-        String departmentName = DataInput.getString();
-        out.println("Введіть курс для студентів: ");
-        int course = DataInput.getInt(1, 6);
-        out.println(printArray(service.sortStudentsByFullNameForCourseInDepartment(service.findDepartmentByName(departmentName).getId(), course)));
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if (department != null){
+            out.println("Введіть курс для студентів: ");
+            int course = DataInput.getInt(1, 6);
+            out.println(printArray(service.sortStudentsByFullNameForCourseInDepartment(department.getId(), course)));
+        }
+        else
+            out.println("кафедра не знайдена!");
     }
     /**
      * Обробляє CRUD-операції для факультету.
@@ -294,7 +324,7 @@ public class Main {
      */
     private static void createFaculty() {
         out.println("Введіть назву факультету: ");
-        service.createFaculty(new FacultyEntity(DataInput.inputName()));
+        service.createFaculty(new FacultyEntity(DataInput.inputFaculty()));
     }
 
     /**
@@ -303,10 +333,12 @@ public class Main {
     private static void updateFaculty() {
         out.println("Виберіть факультет у якого хочете оновити інформацію: ");
         out.println(printArray(service.getFaculties()));
-        if(service.findFacultyByName(DataInput.inputName()) != null){
-            String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+        FacultyEntity faculty = service.findFacultyByName(DataInput.inputFaculty());
+
+        if(faculty != null){
+            String facultyID = faculty.getId();
             out.println("Введіть нову інформацію (назву): ");
-            service.updateFaculty(facultyID, new FacultyEntity(DataInput.inputName()));
+            service.updateFaculty(facultyID, new FacultyEntity(DataInput.inputFaculty()));
         }
         else
             out.println("факультет з таким ім'ям не знайдено!");
@@ -319,8 +351,10 @@ public class Main {
     private static void deleteFaculty() {
         out.println("Виберіть факультет який хочете видалити: ");
         out.println(printArray(service.getFaculties()));
-        if(service.findFacultyByName(DataInput.inputName()) != null){
-            service.deleteFaculty(service.findFacultyByName(DataInput.inputName()).getId());
+        FacultyEntity faculty = service.findFacultyByName(DataInput.inputFaculty());
+
+        if(faculty != null){
+            service.deleteFaculty(faculty.getId());
         }
         else
             out.println("факультет з таким ім'ям видалити неможливо!");
@@ -349,10 +383,16 @@ public class Main {
     private static void createDepartment() {
         out.println("Виберіть факультет у якого хочете створити кафедру: ");
         out.println(printArray(service.getFaculties()));
-        String facultyID = service.findFacultyByName(DataInput.inputName()).getId();
+        FacultyEntity faculty = service.findFacultyByName(DataInput.inputFaculty());
 
-        out.println("Введіть назву кафедри: ");
-        service.createDepartment(new DepartmentEntity(DataInput.inputName()), facultyID);
+        if(faculty != null){
+            String facultyID = faculty.getId();
+            out.println("Введіть назву кафедри: ");
+            service.createDepartment(new DepartmentEntity(DataInput.inputName()), facultyID);
+        }
+        else
+            out.println("факультет з таким ім'ям не існує!");
+
     }
 
     /**
@@ -361,10 +401,17 @@ public class Main {
     private static void updateDepartment() {
         out.println("Виберіть кафедру у якій хочете оновити інформацію: ");
         out.println(printArray(service.getDepartments()));
-        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
 
-        out.println("Введіть нову інформацію (назву): ");
-        service.updateDepartment(departmentID, new DepartmentEntity(DataInput.inputName()));
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if(department != null){
+            String departmentID = department.getId();
+
+            out.println("Введіть нову інформацію (назву): ");
+            service.updateDepartment(departmentID, new DepartmentEntity(DataInput.inputName()));
+        }
+        else
+            out.println("кафедру з таким ім'ям не знайдено!");
     }
 
     /**
@@ -373,7 +420,14 @@ public class Main {
     private static void deleteDepartment() {
         out.println("Виберіть кафедру яку хочете видалити: ");
         out.println(printArray(service.getDepartments()));
-        service.deleteDepartment(service.findDepartmentByName(DataInput.inputName()).getId());
+
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if(department != null){
+            service.deleteDepartment(department.getId());
+        }
+        else
+            out.println("кафедру з таким ім'ям видалити неможливо!");
     }
 
     /**
@@ -405,10 +459,17 @@ public class Main {
     private static void createStudent(){
         out.println("Виберіть кафедру у якого хочете створити студента: ");
         out.println(printArray(service.getDepartments()));
-        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
 
-        out.println("Заповніть дані");
-        service.createStudent(getStudentEntityFromConsole(), departmentID);
+        if(department != null){
+            String departmentID = department.getId();
+
+            out.println("Заповніть дані");
+            service.createStudent(getStudentEntityFromConsole(), departmentID);
+        }
+        else
+            out.println("кафедру не знайдено!");
+
     }
 
     /**
@@ -420,10 +481,15 @@ public class Main {
 
         TeacherEntity studentFullName = getTeacherEntityFromConsole();
 
-        String studentID = service.findStudentByFullName(studentFullName.getName(), studentFullName.getSurname(), studentFullName.getMiddleName()).getId();
+        if(service.findStudentByFullName(studentFullName.getName(), studentFullName.getSurname(), studentFullName.getMiddleName()) != null){
+            String studentID = service.findStudentByFullName(studentFullName.getName(), studentFullName.getSurname(), studentFullName.getMiddleName()).getId();
 
-        out.println("Введіть нову інформацію: ");
-        service.updateStudent(studentID, getStudentEntityFromConsole());
+            out.println("Введіть нову інформацію: ");
+            service.updateStudent(studentID, getStudentEntityFromConsole());
+        }
+        else
+            out.println("студента з таким ім'ям не знайдено!");
+
     }
 
     /**
@@ -435,8 +501,12 @@ public class Main {
 
         TeacherEntity studentFullName = getTeacherEntityFromConsole();
 
-        service.deleteStudent(service.findStudentByFullName(studentFullName.getName(),
-                studentFullName.getSurname(), studentFullName.getMiddleName()).getId());
+        if(service.findStudentByFullName(studentFullName.getName(),studentFullName.getSurname(), studentFullName.getMiddleName()) != null){
+            service.deleteStudent(service.findStudentByFullName(studentFullName.getName(),
+                    studentFullName.getSurname(), studentFullName.getMiddleName()).getId());
+        }
+        else
+            out.println("студента з таким ім'ям видалити неможливо!");
     }
 
     /**
@@ -462,10 +532,18 @@ public class Main {
     private static void createTeacher(){
         out.println("Виберіть кафедру у якого хочете створити вчителя: ");
         out.println(printArray(service.getDepartments()));
-        String departmentID = service.findDepartmentByName(DataInput.inputName()).getId();
 
-        out.println("Заповніть дані");
-        service.createTeacher(getTeacherEntityFromConsole(), departmentID);
+        DepartmentEntity department = service.findDepartmentByName(DataInput.inputName());
+
+        if(department != null){
+            String departmentID = department.getId();
+            out.println("Заповніть дані");
+            service.createTeacher(getTeacherEntityFromConsole(), departmentID);
+        }
+        else
+            out.println("кафедру не знайдено!");
+
+
     }
 
     /**
@@ -477,10 +555,15 @@ public class Main {
 
         TeacherEntity teacherFullName = getTeacherEntityFromConsole();
 
-        String teacherID = service.findTeacherByFullName(teacherFullName.getName(), teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId();
+        if( service.findTeacherByFullName(teacherFullName.getName(), teacherFullName.getSurname(), teacherFullName.getMiddleName()) != null){
+            String teacherID = service.findTeacherByFullName(teacherFullName.getName(), teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId();
 
-        out.println("Введіть нову інформацію: ");
-        service.updateTeacher(teacherID, getTeacherEntityFromConsole());
+            out.println("Введіть нову інформацію: ");
+            service.updateTeacher(teacherID, getTeacherEntityFromConsole());
+        }
+        else
+            out.println("вчителя з таким ім'ям не знайдено!");
+
     }
 
     /**
@@ -492,8 +575,13 @@ public class Main {
 
         TeacherEntity teacherFullName = getTeacherEntityFromConsole();
 
-        service.deleteTeacher(service.findStudentByFullName(teacherFullName.getName(),
-                teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId());
+        if(service.findStudentByFullName(teacherFullName.getName(),teacherFullName.getSurname(), teacherFullName.getMiddleName()) != null){
+            service.deleteTeacher(service.findStudentByFullName(teacherFullName.getName(),
+                    teacherFullName.getSurname(), teacherFullName.getMiddleName()).getId());
+        }
+        else
+            out.println("вчителя з таким ім'ям видалити неможливо!");
+
     }
 
     /**

@@ -149,6 +149,23 @@ public final class DataInput {
             }
         }
     }
+    public static String inputFaculty() {
+        while (true) {
+            try {
+                String input = reader.readLine().trim().toUpperCase();
+                // Дозволено тільки кирилицю, апостроф, дефіс, нижнє підкреслення та пробіли між словами
+                if (input.matches("[А-ЯІЇЄ'_\\-]+(\\s[А-ЯІЇЄ'_\\-]+)*")) {
+                    // Робимо першу букву великою
+                    return input;
+                } else {
+                    System.out.println("Це поле має містити тільки кириличні літери, апостроф, дефіс, нижнє підкреслення та пробіли! Спробуйте ще раз.");
+                }
+            } catch (IOException e) {
+                System.out.println("Сталася помилка при введенні.");
+            }
+        }
+    }
+
     public static String inputName() {
         while (true) {
             try {
